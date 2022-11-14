@@ -610,6 +610,8 @@ def PairwiseAssignment(Isomers,NMRData):
 
                 tempHCalcs[ind] = ''
 
+                exp_ind += 1
+
         # update isomers class
 
         iso.Cexp = assignedCExp
