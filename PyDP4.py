@@ -376,9 +376,9 @@ def main(settings):
             settings.StartTime = now.strftime('%d%b%H%M')
 
             print("Setting up NMR predictions...")
-            Isomers = SGNN.SetupPred(Isomers, settings)
+            Isomers = SGNN.SetupNMRPred(Isomers, settings)
             print("Running NMR predictions...")
-            Isomers = SGNN.RunPred(Isomers, settings)
+            Isomers = SGNN.RunNMRPred(Isomers, settings)
             print("Reading predictions from the output files...")
             Isomers = SGNN.ReadPred(Isomers)
 

@@ -8,7 +8,7 @@ import time
 import glob
 import shutil
 
-def SetupNMRCalcs(Isomers, settings):
+def SetupNMRPred(Isomers, settings):
 
     jobdir = os.getcwd()
 
@@ -56,40 +56,40 @@ def SetupNMRCalcs(Isomers, settings):
     return Isomers
 
 
-def RunNMRCalcs(Isomers, settings):
+def RunNMRPred(Isomers, settings):
 
-    print('\nRunning Gaussian DFT NMR calculations locally...')
+    print('\nRunning SGNN NMR prediction locally...')
 
     jobdir = os.getcwd()
     os.chdir('nmr')
 
-    GausJobs = []
+    SGNNJobs = []
 
     for iso in Isomers:
-        GausJobs.extend([x for x in iso.NMRInputFiles if (x[:-4] + '.out') not in iso.NMROutputFiles])
+        SGNNJobs.extend([x for x in iso.NMRInputFiles if (x[:-4] + '.sout') not in iso.NMROutputFiles])
 
     Completed = RunCalcs(GausJobs, settings)
 
     for iso in Isomers:
-        iso.NMROutputFiles.extend([x[:-4] + '.out' for x in iso.NMRInputFiles if (x[:-4] + '.out') in Completed])
+        iso.NMROutputFiles.extend([x[:-4] + '.sout' for x in iso.NMRInputFiles if (x[:-4] + '.sout') in Completed])
 
     os.chdir(jobdir)
 
     return Isomers
 
 
-def GetPrerunNMRCalcs(Isomers):
+def GetPrerunNMRPred(Isomers):
 
-    print('\nLooking for prerun Gaussian DFT NMR files...')
+    print('\nLooking for prerun SGNN NMR prediction files...')
 
     jobdir = os.getcwd()
     os.chdir('nmr')
 
     for iso in Isomers:
-        iso.NMRInputFiles = glob.glob(iso.BaseName + 'ginp*com')
-        iso.NMROutputFiles.extend([x[:-4] + '.out' for x in iso.NMRInputFiles if IsGausCompleted(x[:-4] + '.out')])
+        iso.NMRInputFiles = glob.glob(iso.BaseName + 'sinp*scom')
+        iso.NMROutputFiles.extend([x[:-4] + '.sout' for x in iso.NMRInputFiles if IsGausCompleted(x[:-4] + '.sout')])
 
-    print('NMR calc files:')
+    print('NMR prediction files:')
     print(', '.join([', '.join(x.NMROutputFiles) for x in Isomers]))
 
     os.chdir(jobdir)
@@ -97,12 +97,12 @@ def GetPrerunNMRCalcs(Isomers):
     return Isomers
 
 
-def RunCalcs(GausJobs, settings):
+def RunCalcs(SGNNJobs, settings):
 
     NCompleted = 0
     Completed = []
 
-    if len(GausJobs) == 0:
+    if len(SGNNJobs) == 0:
         print("There were no jobs to run.")
         return Completed
 
@@ -138,9 +138,9 @@ def RunCalcs(GausJobs, settings):
     return Completed
 
 
-def WriteGausFile(Gausinp, conformer, atoms, charge, settings, type):
+def WriteSGNNFile(SGNNinp, atoms, charge, settings, type):
 
-    f = open(Gausinp + '.com', 'w')
+    f = open(SGNNinp + '.scom', 'w')
     if(settings.nProc > 1):
         f.write('%nprocshared=' + str(settings.nProc) + '\n')
     if settings.DFT == 'g':
