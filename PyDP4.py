@@ -175,11 +175,14 @@ class Isomer:
         self.EOutputFiles = []  # list of DFT NMR output file names
         self.NMRInputFiles = []  # list of DFT NMR input file names
         self.NMROutputFiles = []  # list of DFT NMR output file names
+        self.SGNNInputFiles = []
+        self.SGNNOutputFiles = []
         self.ShieldingLabels = []  # A list of atom labels corresponding to the shielding values
         self.ConformerShieldings = []  # list of calculated NMR shielding constant lists for every conformer
         self.ConformerCShifts = [] # list of calculated C NMR shifts lists for every conformer
         self.ConformerHShifts = [] # list of calculated H NMR shifts lists for every conformer
         self.BoltzmannShieldings = []  # Boltzmann weighted NMR shielding constant list for the isomer
+        self.PredShifts = [] # SGNN predicted shift list for the isomer
         self.Cshifts = []  # Calculated C NMR shifts
         self.Hshifts = []  # Calculated H NMR
         self.Clabels = []
@@ -376,7 +379,7 @@ def main(settings):
             print("Running NMR predictions...")
             Isomers = SGNN.RunPred(Isomers, settings)
             print("Reading predictions from the output files...")
-            Isomers = SGNN.ReadPred(Isomers, settings)
+            Isomers = SGNN.ReadPred(Isomers)
 
     else:
         # Read DFT optimized geometries, if requested
@@ -413,6 +416,9 @@ def main(settings):
             print("Conformation data:")
             NMR.PrintConformationData(Isomers)
             """
+        elif ('l' in settings.Workflow):
+            print("\nConverting predicted shift list to lists assigned by atom")
+            Isomers = NMR.ReadPredictedShifts(Isomers, settings)
 
         print('\nReading experimental NMR data...')
         NMRData = NMR.NMRData(settings)
