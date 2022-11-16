@@ -36,6 +36,7 @@ Interprets the arguments and takes care of the general workflow logic.
 """
 
 import NMR
+import SGNN
 import Tinker
 import MacroModel
 import DP5 as DP5
