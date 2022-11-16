@@ -300,6 +300,8 @@ def main(settings):
     if ('n' in settings.Workflow) or ('o' in settings.Workflow) \
             or ('e' in settings.Workflow) or settings.AssumeDone:
         DFT = ImportDFT(settings.DFT)
+    elif ('l' in settings.Workflow):
+        print("Obtaining predicted NMR data from SGNN model.")
     else:
         print('\nNo DFT calculations were requested. Skipping...')
 
@@ -363,6 +365,18 @@ def main(settings):
             print("Energies: ")
             for iso in Isomers:
                 print(iso.InputFile + ": " + str(iso.DFTEnergies))
+        
+        if ('l' in settings.Workflow):
+
+            now = datetime.datetime.now()
+            settings.StartTime = now.strftime('%d%b%H%M')
+
+            print("Setting up NMR predictions...")
+            Isomers = SGNN.SetupPred(Isomers, settings)
+            print("Running NMR predictions...")
+            Isomers = SGNN.RunPred(Isomers, settings)
+            print("Reading predictions from the output files...")
+            Isomers = SGNN.ReadPred(Isomers, settings)
 
     else:
         # Read DFT optimized geometries, if requested
@@ -380,26 +394,28 @@ def main(settings):
             Isomers = DFT.ReadShieldings(Isomers)
             Isomers = DFT.ReadEnergies(Isomers, settings)
 
-    if not (NMR.NMRDataValid(Isomers)) or ('n' not in settings.Workflow):
+    if not (NMR.NMRDataValid(Isomers)) or ('n' not in settings.Workflow) \
+        or ('l' not in settings.Workflow):
         print('\nNo NMR data calculated, quitting...')
         quit()
 
     if ('s' in settings.Workflow) or ('a' in settings.Workflow) or ('w' in settings.Workflow):
 
-        print('\nSetting TMS computational NMR shielding constant references')
-        settings.TMS_SC_C13, settings.TMS_SC_H1 = NMR.GetTMSConstants(settings)
+        if ('n' in settings.Workflow):
+            print('\nSetting TMS computational NMR shielding constant references')
+            settings.TMS_SC_C13, settings.TMS_SC_H1 = NMR.GetTMSConstants(settings)
 
-        print('\nConverting DFT data to NMR shifts...')
-        Isomers = NMR.CalcBoltzmannWeightedShieldings(Isomers)
-        Isomers = NMR.CalcNMRShifts(Isomers, settings)
+            print('\nConverting DFT data to NMR shifts...')
+            Isomers = NMR.CalcBoltzmannWeightedShieldings(Isomers)
+            Isomers = NMR.CalcNMRShifts(Isomers, settings)
+
+            """
+            print("Conformation data:")
+            NMR.PrintConformationData(Isomers)
+            """
 
         print('\nReading experimental NMR data...')
         NMRData = NMR.NMRData(settings)
-
-        """
-        print("Conformation data:")
-        NMR.PrintConformationData(Isomers)
-        """
 
         if NMRData.Type == 'desc':
 
@@ -657,6 +673,7 @@ if __name__ == '__main__':
     parser.add_argument('-w', '--workflow', help="Defines which steps to include in the workflow, " +
                                                  "can contain g for generate diastereomers, m for molecular mechanics conformational search, " +
                                                  "o for DFT optimization, e for DFT single-point energies, n for DFT NMR calculation, " +
+                                                 "l for SGNN NMR prediction, "
                                                  "a for computational and experimental NMR data extraction " +
                                                  "s for computational and experimental NMR data extraction and stats analysis, default is 'gmns'",
                         default=settings.Workflow)
