@@ -66,12 +66,12 @@ def RunNMRPred(Isomers, settings):
     SGNNJobs = []
 
     for iso in Isomers:
-        SGNNJobs.extend([x for x in iso.NMRInputFiles if (x[:-4] + '.sout') not in iso.NMROutputFiles])
+        SGNNJobs.extend([x for x in iso.SGNNInputFiles if (x[:-4] + '.sout') not in iso.SGNNOutputFiles])
 
-    Completed = RunCalcs(GausJobs, settings)
+    Completed = RunCalcs(SGNNJobs, settings)
 
     for iso in Isomers:
-        iso.NMROutputFiles.extend([x[:-4] + '.sout' for x in iso.NMRInputFiles if (x[:-4] + '.sout') in Completed])
+        iso.SGNNOutputFiles.extend([x[:-4] + '.sout' for x in iso.SGNNInputFiles if (x[:-4] + '.sout') in Completed])
 
     os.chdir(jobdir)
 
@@ -98,6 +98,8 @@ def GetPrerunNMRPred(Isomers):
 
 
 def RunCalcs(SGNNJobs, settings):
+
+    # TODO: implement logic to run SGNN predictions
 
     NCompleted = 0
     Completed = []
@@ -138,49 +140,49 @@ def RunCalcs(SGNNJobs, settings):
     return Completed
 
 
-def WriteSGNNFile(SGNNinp, atoms, charge, settings, type):
+# def WriteSGNNFile(SGNNinp, atoms, charge, settings, type):
 
-    f = open(SGNNinp + '.scom', 'w')
-    if(settings.nProc > 1):
-        f.write('%nprocshared=' + str(settings.nProc) + '\n')
-    if settings.DFT == 'g':
-        f.write('%mem=2000MB\n%chk='+Gausinp + '.chk\n')
-    elif settings.DFT == 'z':
-        f.write('%mem=1000MB\n%chk=' + Gausinp + '.chk\n')
-    else:
-        f.write('%mem=6000MB\n%chk='+Gausinp + '.chk\n')
+#     f = open(SGNNinp + '.scom', 'w')
+#     if(settings.nProc > 1):
+#         f.write('%nprocshared=' + str(settings.nProc) + '\n')
+#     if settings.DFT == 'g':
+#         f.write('%mem=2000MB\n%chk='+Gausinp + '.chk\n')
+#     elif settings.DFT == 'z':
+#         f.write('%mem=1000MB\n%chk=' + Gausinp + '.chk\n')
+#     else:
+#         f.write('%mem=6000MB\n%chk='+Gausinp + '.chk\n')
 
-    if type == 'nmr':
-        f.write(NMRRoute(settings))
-    elif type == 'e':
-        f.write(ERoute(settings))
-    elif type == 'opt':
-        f.write(OptRoute(settings))
+#     if type == 'nmr':
+#         f.write(NMRRoute(settings))
+#     elif type == 'e':
+#         f.write(ERoute(settings))
+#     elif type == 'opt':
+#         f.write(OptRoute(settings))
 
-    f.write('\n'+Gausinp+'\n\n')
-    f.write(str(charge) + ' 1\n')
+#     f.write('\n'+Gausinp+'\n\n')
+#     f.write(str(charge) + ' 1\n')
 
-    natom = 0
+#     natom = 0
 
-    for atom in conformer:
-        f.write(atoms[natom] + '  ' + atom[0] + '  ' + atom[1] + '  ' +
-                atom[2] + '\n')
-        natom = natom + 1
-    f.write('\n')
+#     for atom in conformer:
+#         f.write(atoms[natom] + '  ' + atom[0] + '  ' + atom[1] + '  ' +
+#                 atom[2] + '\n')
+#         natom = natom + 1
+#     f.write('\n')
 
-    f.close()
+#     f.close()
 
 
-def IsGausCompleted(f):
-    Gfile = open(f, 'r')
-    outp = Gfile.readlines()
-    Gfile.close()
-    if len(outp) < 10:
-        return False
-    if ("Normal termination" in outp[-1]) or (('termination' in '\n'.join(outp[-3:])) and ('l9999.exe' in '\n'.join(outp[-3:]))):
-        return True
-    else:
-        return False
+# def IsGausCompleted(f):
+#     Gfile = open(f, 'r')
+#     outp = Gfile.readlines()
+#     Gfile.close()
+#     if len(outp) < 10:
+#         return False
+#     if ("Normal termination" in outp[-1]) or (('termination' in '\n'.join(outp[-3:])) and ('l9999.exe' in '\n'.join(outp[-3:]))):
+#         return True
+#     else:
+#         return False
 
 
 def ReadPred(Isomers):
