@@ -35,19 +35,20 @@ The main file, that should be called to start the PyDP4 workflow.
 Interprets the arguments and takes care of the general workflow logic.
 """
 
+import argparse
+import datetime
+import getpass
+import importlib
+import os
+import sys
+from pathlib import Path
+
+import DP4 as DP4
+import DP5 as DP5
+import MacroModel
 import NMR
 import SGNN
 import Tinker
-import MacroModel
-import DP5 as DP5
-import DP4 as DP4
-import sys
-import os
-import datetime
-import argparse
-import importlib
-import getpass
-from pathlib import Path
 
 DFTpackages = [['n', 'w', 'g', 'z', 'd'],['NWChem', 'NWChemZiggy', 'Gaussian', 'GaussianZiggy', 'GaussianDarwin']]
 
@@ -259,7 +260,7 @@ def main(settings):
     Isomers = [Isomer(f.split('.sdf')[0]) for f in settings.InputFiles]
 
     print("Assuming all computations are done? ... ", settings.AssumeDone)
-    print("Using preexisting DFT data? ... ", settings.UseExistingInputs)
+    print("Using preexisting NMR data? ... ", settings.UseExistingInputs)
 
     # Run conformational search, if requested
     if ('m' in settings.Workflow) and not (settings.AssumeDone or settings.UseExistingInputs):
@@ -378,6 +379,7 @@ def main(settings):
             print("Setting up NMR predictions...")
             Isomers = SGNN.SetupNMRPred(Isomers, settings)
             print("Running NMR predictions...")
+            print(hello)
             Isomers = SGNN.RunNMRPred(Isomers, settings)
             print("Reading predictions from the output files...")
             Isomers = SGNN.ReadPred(Isomers)

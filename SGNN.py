@@ -29,13 +29,10 @@ def SetupNMRPred(Isomers, settings):
 
         filename = iso.BaseName + 'sinp'
 
+        # Checks for pre-existing SGNN output files and assumes they are done if they exist
         if os.path.exists(filename + '.sout'):
-            if IsSGNNCompleted(filename + '.sout'):
-                iso.SGNNOutputFiles.append(filename + '.sout')
-            else:
-                os.remove(filename + '.sout')
-            
-            WriteSGNNFile(filename, iso.Atoms, charge, settings, 'nmr')
+            iso.SGNNOutputFiles.append(filename + '.sout')
+        else:    
             iso.SGNNInputFiles.append(filename + '.scom')
 
         # for num in range(0, len(conformers)):
@@ -68,7 +65,7 @@ def RunNMRPred(Isomers, settings):
     for iso in Isomers:
         SGNNJobs.extend([x for x in iso.SGNNInputFiles if (x[:-4] + '.sout') not in iso.SGNNOutputFiles])
 
-    Completed = RunCalcs(SGNNJobs, settings)
+    Completed = RunSGNNPred(SGNNJobs, settings)
 
     for iso in Isomers:
         iso.SGNNOutputFiles.extend([x[:-4] + '.sout' for x in iso.SGNNInputFiles if (x[:-4] + '.sout') in Completed])
@@ -97,47 +94,52 @@ def GetPrerunNMRPred(Isomers):
     return Isomers
 
 
-def RunCalcs(SGNNJobs, settings):
+def Pred(SGNNJobs, settings):
 
     # TODO: implement logic to run SGNN predictions
-
-    NCompleted = 0
-    Completed = []
-
+    
     if len(SGNNJobs) == 0:
         print("There were no jobs to run.")
         return Completed
 
-    if ('GAUS_EXEDIR' in os.environ):
-        gausdir = os.environ['GAUSS_EXEDIR']
-        if shutil.which(os.path.join(gausdir, 'g09')) is None:
-            GausPrefix = os.path.join(gausdir, "g16")
-        else:
-            GausPrefix = os.path.join(gausdir, "g09")
-    else:
-        GausPrefix = settings.GausPath
+    print("Function to run the SGNN predictions not yet implemented. Quitting.")
 
-    if shutil.which(GausPrefix) is None:
-        print('Gaussian.py, RunCalcs:\n  Could not find Gaussian executable at ' + GausPrefix)
-        quit()
+    quit()
 
-    for f in GausJobs:
-        time.sleep(3)
-        print(GausPrefix + " < " + f + ' > ' + f[:-3] + 'out')
-        outp = subprocess.check_output(GausPrefix + " < "  + f + ' > ' + f[:-3] + 'out', shell=True,timeout= 86400)
+    # NCompleted = 0
+    # Completed = []
 
-        NCompleted += 1
-        if IsGausCompleted(f[:-4] + '.out'):
-            Completed.append(f[:-4] + '.out')
-            print("Gaussian job " + str(NCompleted) + " of " + str(len(GausJobs)) + \
-                  " completed.")
-        else:
-            print("Gaussian job terminated with an error. Continuing.")
 
-    if NCompleted > 0:
-        print(str(NCompleted) + " Gaussian jobs completed successfully.")
+    # if ('GAUS_EXEDIR' in os.environ):
+    #     gausdir = os.environ['GAUSS_EXEDIR']
+    #     if shutil.which(os.path.join(gausdir, 'g09')) is None:
+    #         GausPrefix = os.path.join(gausdir, "g16")
+    #     else:
+    #         GausPrefix = os.path.join(gausdir, "g09")
+    # else:
+    #     GausPrefix = settings.GausPath
 
-    return Completed
+    # if shutil.which(GausPrefix) is None:
+    #     print('Gaussian.py, RunCalcs:\n  Could not find Gaussian executable at ' + GausPrefix)
+    #     quit()
+
+    # for f in GausJobs:
+    #     time.sleep(3)
+    #     print(GausPrefix + " < " + f + ' > ' + f[:-3] + 'out')
+    #     outp = subprocess.check_output(GausPrefix + " < "  + f + ' > ' + f[:-3] + 'out', shell=True,timeout= 86400)
+
+    #     NCompleted += 1
+    #     if IsGausCompleted(f[:-4] + '.out'):
+    #         Completed.append(f[:-4] + '.out')
+    #         print("Gaussian job " + str(NCompleted) + " of " + str(len(GausJobs)) + \
+    #               " completed.")
+    #     else:
+    #         print("Gaussian job terminated with an error. Continuing.")
+
+    # if NCompleted > 0:
+    #     print(str(NCompleted) + " Gaussian jobs completed successfully.")
+
+    # return Completed
 
 
 # def WriteSGNNFile(SGNNinp, atoms, charge, settings, type):
