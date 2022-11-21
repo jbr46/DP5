@@ -16,24 +16,35 @@ def SetupNMRPred(Isomers, settings):
         os.mkdir('nmr')
     os.chdir('nmr')
 
-    for iso in Isomers:
-        if iso.ExtCharge > -10:
-            charge = iso.ExtCharge
-        else:
-            charge = iso.MMCharge
+    if os.path.exists('SGNN_inputs.csv'):
+        os.remove('SGNN_inputs.csv')
+    with open('SGNN_inputs.csv', 'w') as inputfile:
+        inputfile.write(',sample-id,SMILES\n')
+        for num, iso in enumerate(Isomers):
+            if os.path.exists(filename + '.sout'):
+                iso.SGNNOutputFiles.append(filename + '.sout')
+            else:
+                inputfile.write(str(num) + ',HMDB' + str(num) + ',' + iso.Smiles + '\n')
+        
+
+    # for iso in Isomers:
+    #     if iso.ExtCharge > -10:
+    #         charge = iso.ExtCharge
+    #     else:
+    #         charge = iso.MMCharge
 
         # if iso.DFTConformers == []:
         #     conformers = iso.Conformers
         # else:
         #     conformers = iso.DFTConformers
 
-        filename = iso.BaseName + 'sinp'
+        # filename = iso.BaseName + '.sinp'
 
         # Checks for pre-existing SGNN output files and assumes they are done if they exist
-        if os.path.exists(filename + '.sout'):
-            iso.SGNNOutputFiles.append(filename + '.sout')
-        else:    
-            iso.SGNNInputFiles.append(filename + '.scom')
+        # if os.path.exists(filename + '.sout'):
+        #     iso.SGNNOutputFiles.append(filename + '.sout')
+        # else:    
+        #     iso.SGNNInputFiles.append(filename + '.scom')
 
         # for num in range(0, len(conformers)):
         #     filename = iso.BaseName + 'ginp' + str(num + 1).zfill(3)
@@ -60,15 +71,15 @@ def RunNMRPred(Isomers, settings):
     jobdir = os.getcwd()
     os.chdir('nmr')
 
-    SGNNJobs = []
+    # SGNNJobs = []
+
+    # for iso in Isomers:
+    #     SGNNJobs.extend([iso.BaseName if (iso.BaseName + '.sout') not in iso.SGNNOutputFiles])
+
+    Completed = Pred(settings)
 
     for iso in Isomers:
-        SGNNJobs.extend([x for x in iso.SGNNInputFiles if (x[:-4] + '.sout') not in iso.SGNNOutputFiles])
-
-    Completed = RunSGNNPred(SGNNJobs, settings)
-
-    for iso in Isomers:
-        iso.SGNNOutputFiles.extend([x[:-4] + '.sout' for x in iso.SGNNInputFiles if (x[:-4] + '.sout') in Completed])
+        iso.SGNNOutputFiles.extend([iso.BaseName + '.sout' if (iso.BaseName + '.sout') in Completed])
 
     os.chdir(jobdir)
 

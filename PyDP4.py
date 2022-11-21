@@ -49,6 +49,7 @@ import MacroModel
 import NMR
 import SGNN
 import Tinker
+import StructureInput
 
 DFTpackages = [['n', 'w', 'g', 'z', 'd'],['NWChem', 'NWChemZiggy', 'Gaussian', 'GaussianZiggy', 'GaussianDarwin']]
 
@@ -157,9 +158,10 @@ settings = Settings()
 
 # Data structure keeping all of isomer data in one place.
 class Isomer:
-    def __init__(self, InputFile, Charge=-100):
+    def __init__(self, InputFile, smiles, Charge=-100):
         self.InputFile = InputFile  # Initial structure input file
         self.BaseName = InputFile  # Basename for other files
+        self.Smiles = smiles
         self.Atoms = []  # Element labels
         self.Conformers = []  # from conformational search, list of atom coordinate lists
         self.MMCharge = 0  # charge from conformational search
@@ -243,12 +245,14 @@ def main(settings):
         if len(settings.InputFiles) == 1:
 
             FinalInputFiles.extend(
-                InchiGen.GenDiastereomers(settings.InputFiles[0], nStereo[0], settings.SelectedStereocentres))
+                InchiGen.GenDiastereomers((settings.InputFiles[0], nStereo[0], settings.SelectedStereocentres), \
+                    StructureInput.GenerateSmilesFromSDF(InputFiles[0])))
 
         else:
 
             for InpFile, nStereoCentres in zip(settings.InputFiles, nStereo):
-                FinalInputFiles.extend(InchiGen.GenDiastereomers(InpFile, nStereoCentres, []))
+                FinalInputFiles.extend((InchiGen.GenDiastereomers(InpFile, nStereoCentres, []), \
+                    StructureInput.GenerateSmilesFromSDF(InpFile)))
 
         settings.InputFiles = list(FinalInputFiles)
 
@@ -257,7 +261,7 @@ def main(settings):
     print("Generated input files: " + str(settings.InputFiles) + '\n')
 
     # Create isomer data structures
-    Isomers = [Isomer(f.split('.sdf')[0]) for f in settings.InputFiles]
+    Isomers = [Isomer(f.split('.sdf')[0], smiles) for f, smiles in settings.InputFiles]
 
     print("Assuming all computations are done? ... ", settings.AssumeDone)
     print("Using preexisting NMR data? ... ", settings.UseExistingInputs)

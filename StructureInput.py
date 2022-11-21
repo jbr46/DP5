@@ -13,6 +13,16 @@ def GenerateMolFromSDF(InputFile):
 
     return m
 
+def GenerateSmilesFromSDF(InputFile):
+
+    cwd = os.getcwd()
+
+    fullf = os.path.join(cwd, InputFile + '.sdf')
+
+    m = Chem.MolFromMolFile(fullf, removeHs=False,sanitize = True)
+
+    return Chem.MolToSmiles(m)
+
 def GenerateSDFFromTxt(InputFile,inp_type):
 
     Mols = []
