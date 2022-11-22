@@ -47,7 +47,7 @@ import DP4 as DP4
 import DP5 as DP5
 import MacroModel
 import NMR
-import SGNN
+import SGNN_DP5
 import Tinker
 
 DFTpackages = [['n', 'w', 'g', 'z', 'd'],['NWChem', 'NWChemZiggy', 'Gaussian', 'GaussianZiggy', 'GaussianDarwin']]
@@ -157,7 +157,7 @@ settings = Settings()
 
 # Data structure keeping all of isomer data in one place.
 class Isomer:
-    def __init__(self, InputFile, smiles, Charge=-100):
+    def __init__(self, InputFile, Charge=-100):
         self.InputFile = InputFile  # Initial structure input file
         self.BaseName = InputFile  # Basename for other files
         self.Atoms = []  # Element labels
@@ -377,11 +377,11 @@ def main(settings):
             settings.StartTime = now.strftime('%d%b%H%M')
 
             print("Setting up NMR predictions...")
-            Isomers = SGNN.SetupNMRPred(Isomers, settings)
+            Isomers = SGNN_DP5.SetupNMRPred(Isomers, settings)
             print("Running NMR predictions...")
-            Isomers = SGNN.RunNMRPred(Isomers, settings)
+            Isomers = SGNN_DP5.RunNMRPred(Isomers, settings)
             print("Reading predictions from the output files...")
-            Isomers = SGNN.ReadPred(Isomers)
+            Isomers = SGNN_DP5.ReadPred(Isomers)
 
     else:
         # Read DFT optimized geometries, if requested

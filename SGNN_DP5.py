@@ -19,12 +19,12 @@ def SetupNMRPred(Isomers, settings):
     if os.path.exists('SGNN_inputs.csv'):
         os.remove('SGNN_inputs.csv')
     with open('SGNN_inputs.csv', 'w') as inputfile:
-        inputfile.write(',sample-id,SMILES\n')
+        inputfile.write('number,sample-id\n')
         for num, iso in enumerate(Isomers):
-            if os.path.exists(inputfile + '.sout'):
-                iso.SGNNOutputFiles.append(inputfile + '.sout')
+            if os.path.exists(iso.BaseName + '.sout'):
+                iso.SGNNOutputFiles.append(iso.BaseName + '.sout')
             else:
-                inputfile.write(str(num) + ',' + iso.BaseName + ',' + iso.Smiles + '\n')
+                inputfile.write(str(num) + ',' + iso.BaseName + '\n')
 
     os.chdir(jobdir)
 
@@ -69,7 +69,7 @@ def SGNN_pred(settings):
     from SGNN import prediction
     
     save_folder = os.getcwd()
-    path_csv = save_folder + 'SGNN_inputs.csv'
+    path_csv = save_folder + '/SGNN_inputs.csv'
     prediction(save_folder, path_csv)
 
 
