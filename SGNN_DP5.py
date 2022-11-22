@@ -46,34 +46,6 @@ def RunNMRPred(Isomers, settings):
     return Isomers
 
 
-# def GetPrerunNMRPred(Isomers):
-
-#     print('\nLooking for prerun SGNN NMR prediction files...')
-
-#     jobdir = os.getcwd()
-#     os.chdir('nmr')
-
-#     for iso in Isomers:
-#         iso.NMRInputFiles = glob.glob(iso.BaseName + 'sinp*scom')
-#         iso.NMROutputFiles.extend([x[:-4] + '.sout' for x in iso.NMRInputFiles if IsGausCompleted(x[:-4] + '.sout')])
-
-#     print('NMR prediction files:')
-#     print(', '.join([', '.join(x.NMROutputFiles) for x in Isomers]))
-
-#     os.chdir(jobdir)
-
-#     return Isomers
-
-
-# def SGNN_pred(settings):
-
-#     from SGNN import prediction
-    
-#     save_folder = os.getcwd() + '/nmr'
-#     path_csv = save_folder + '/SGNN_inputs.csv'
-#     prediction(save_folder, path_csv)
-
-
 def ReadPred(Isomers):
 
     jobdir = os.getcwd()
@@ -81,7 +53,6 @@ def ReadPred(Isomers):
 
     for iso in Isomers:
         output_file = iso.BaseName + '.sout'
-        print(os.getcwd())
         with open(output_file, 'r') as sgnnfile:
             for shift in sgnnfile:
                 iso.PredShifts.append(shift)
