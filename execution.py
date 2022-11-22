@@ -289,7 +289,7 @@ def create_shift_list(mol, x_h_connectivity_dict, test_y_pred_C, test_y_pred_H):
 def save_results(save_folder, ID, final_list):
     """ This function saves the final shift predictions into an output file with the lowest energy conformer"""
 
-    name = "SGNN_" + str(ID)+ ".sout"
+    name = str(ID) + ".sout"
     output_file = os.path.join(save_folder, name)
     with open(output_file, "w",  encoding='utf-8', errors='ignore') as output:
         for shift in final_list:

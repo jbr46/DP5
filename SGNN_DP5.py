@@ -36,11 +36,12 @@ def RunNMRPred(Isomers, settings):
     print('\nRunning SGNN NMR prediction locally...')
 
     jobdir = os.getcwd()
-    os.chdir('nmr')
 
-    SGNN_pred(settings)
-
-    os.chdir(jobdir)
+    from SGNN import prediction
+    
+    save_folder = os.getcwd() + '/nmr'
+    path_csv = save_folder + '/SGNN_inputs.csv'
+    prediction(save_folder, path_csv)
 
     return Isomers
 
@@ -64,13 +65,13 @@ def RunNMRPred(Isomers, settings):
 #     return Isomers
 
 
-def SGNN_pred(settings):
+# def SGNN_pred(settings):
 
-    from SGNN import prediction
+#     from SGNN import prediction
     
-    save_folder = os.getcwd()
-    path_csv = save_folder + '/SGNN_inputs.csv'
-    prediction(save_folder, path_csv)
+#     save_folder = os.getcwd() + '/nmr'
+#     path_csv = save_folder + '/SGNN_inputs.csv'
+#     prediction(save_folder, path_csv)
 
 
 def ReadPred(Isomers):
@@ -80,6 +81,7 @@ def ReadPred(Isomers):
 
     for iso in Isomers:
         output_file = iso.BaseName + '.sout'
+        print(os.getcwd())
         with open(output_file, 'r') as sgnnfile:
             for shift in sgnnfile:
                 iso.PredShifts.append(shift)
