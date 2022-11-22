@@ -49,7 +49,6 @@ import MacroModel
 import NMR
 import SGNN
 import Tinker
-import StructureInput
 
 DFTpackages = [['n', 'w', 'g', 'z', 'd'],['NWChem', 'NWChemZiggy', 'Gaussian', 'GaussianZiggy', 'GaussianDarwin']]
 
@@ -161,7 +160,6 @@ class Isomer:
     def __init__(self, InputFile, smiles, Charge=-100):
         self.InputFile = InputFile  # Initial structure input file
         self.BaseName = InputFile  # Basename for other files
-        self.Smiles = smiles
         self.Atoms = []  # Element labels
         self.Conformers = []  # from conformational search, list of atom coordinate lists
         self.MMCharge = 0  # charge from conformational search
@@ -245,23 +243,21 @@ def main(settings):
         if len(settings.InputFiles) == 1:
 
             FinalInputFiles.extend(
-                InchiGen.GenDiastereomers((settings.InputFiles[0], nStereo[0], settings.SelectedStereocentres), \
-                    StructureInput.GenerateSmilesFromSDF(InputFiles[0])))
+                InchiGen.GenDiastereomers(settings.InputFiles[0], nStereo[0], settings.SelectedStereocentres))
 
         else:
 
             for InpFile, nStereoCentres in zip(settings.InputFiles, nStereo):
-                FinalInputFiles.extend((InchiGen.GenDiastereomers(InpFile, nStereoCentres, []), \
-                    StructureInput.GenerateSmilesFromSDF(InpFile)))
+                FinalInputFiles.extend(InchiGen.GenDiastereomers(InpFile, nStereoCentres, []))
 
         settings.InputFiles = list(FinalInputFiles)
 
-    settings.InputFilesPaths = [Path.cwd() / i for i in settings.InputFiles]
+    # settings.InputFilesPaths = [Path.cwd() / i for i in settings.InputFiles]
 
     print("Generated input files: " + str(settings.InputFiles) + '\n')
 
     # Create isomer data structures
-    Isomers = [Isomer(f.split('.sdf')[0], smiles) for f, smiles in settings.InputFiles]
+    Isomers = [Isomer(f.split('.sdf')[0]) for f in settings.InputFiles]
 
     print("Assuming all computations are done? ... ", settings.AssumeDone)
     print("Using preexisting NMR data? ... ", settings.UseExistingInputs)
@@ -383,7 +379,6 @@ def main(settings):
             print("Setting up NMR predictions...")
             Isomers = SGNN.SetupNMRPred(Isomers, settings)
             print("Running NMR predictions...")
-            print(hello)
             Isomers = SGNN.RunNMRPred(Isomers, settings)
             print("Reading predictions from the output files...")
             Isomers = SGNN.ReadPred(Isomers)
