@@ -41,10 +41,10 @@ def load_model(target, save_path):
     net = nmr_mpnn_PROPOSED(node_dim, edge_dim, readout_mode, node_embedding_dim, readout_n_hidden_dim).cuda()
 
     if target == "1H":
-        model_path = "/home/jbr46/nmr_sgnn/model/13C_sparsified_proposed_proposed_set2set_1.pt"
+        model_path = "/home/jbr46/nmr_sgnn/model/1H_sparsified_proposed_proposed_set2set_1.pt"
         net.load_state_dict(torch.load(model_path))
     elif target == "13C":
-        model_path = "/home/jbr46/nmr_sgnn/model/1H_sparsified_proposed_proposed_set2set_1.pt"
+        model_path = "/home/jbr46/nmr_sgnn/model/13C_sparsified_proposed_proposed_set2set_1.pt"
         net.load_state_dict(torch.load(model_path))
     return net
 
