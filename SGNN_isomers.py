@@ -8,6 +8,7 @@ import sys
 import time
 
 from openbabel import pybel
+from rdkit.Chem import MolFromMolFile, rdmolops
 
 
 def SetupIsomers(Isomers, settings):
@@ -18,16 +19,23 @@ def SetupIsomers(Isomers, settings):
 
 
 def ReadIsomer(name, settings):
-    AN_to_atom = {
-        1: 'H',
-        6: 'C'
-    }
-    isomer = next(pybel.readfile("sdf", name + ".sdf"))
     atoms_list = []
-    for atom in pybel.Molecule(isomer).atoms:
-        if atom.atomicnum in AN_to_atom:
-            atoms_list.append(AN_to_atom[atom.atomicnum])
-        else:
-            atoms_list.append('_')
+    # Using openbabel
+    # AN_to_atom = {
+    #     1: 'H',
+    #     6: 'C'
+    # }
+    # isomer = next(pybel.readfile("sdf", name + ".sdf"))
+    # for atom in pybel.Molecule(isomer).atoms:
+    #     if atom.atomicnum in AN_to_atom:
+    #         atoms_list.append(AN_to_atom[atom.atomicnum])
+    #     else:
+    #         atoms_list.append('_')
+
+    # Using rdkit
+    mol = MolFromMolFile(name + '.sdf')
+    mol = rdmolops.AddHs(mol)
+    for atom in mol.GetAtoms():
+        atoms_list.append(atom.GetSymbol())
 
     return atoms_list

@@ -12,8 +12,9 @@ def SetupNMRPred(Isomers, settings):
 
     jobdir = os.getcwd()
 
-    if not os.path.exists('nmr'):
-        os.mkdir('nmr')
+    if os.path.exists('nmr'):
+        shutil.rmtree('nmr')
+    os.mkdir('nmr')
     os.chdir('nmr')
 
     if os.path.exists('SGNN_inputs.csv'):
