@@ -35,8 +35,6 @@ def RunNMRPred(Isomers, settings):
 
     print('\nRunning SGNN NMR prediction locally...')
 
-    jobdir = os.getcwd()
-
     from SGNN import prediction
     
     save_folder = os.getcwd() + '/nmr'

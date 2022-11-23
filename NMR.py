@@ -144,8 +144,6 @@ class NMRData:
 
             ShiftData = (re.sub(r"\(.*?\)", "", exp.strip(), flags=re.DOTALL)).split(',')
 
-            print(ShiftData)
-
             expShifts = [float(x) for x in ShiftData]
 
         else:
@@ -378,6 +376,7 @@ def ReadPredictedShifts(Isomers, settings):
     for i, iso in enumerate(Isomers):
 
         shifts = iso.PredShifts
+        print(shifts)
 
         Cvalues = []
         Hvalues = []
