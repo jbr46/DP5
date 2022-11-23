@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 
 import os
-import shutil
-import sys
-import subprocess
-import shutil
-import time
 import re
+import shutil
+import subprocess
+import sys
+import time
+
 from openbabel import pybel
 
 
@@ -19,8 +19,8 @@ def SetupIsomers(Isomers, settings):
 
 def ReadIsomer(name, settings):
     AN_to_atom = {
-        1 = 'H',
-        6 = 'C'
+        1: 'H',
+        6: 'C'
     }
     isomer = next(pybel.readfile("sdf", name + ".sdf"))
     atoms_list = []

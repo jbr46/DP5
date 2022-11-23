@@ -53,7 +53,7 @@ def ReadPred(Isomers):
         output_file = iso.BaseName + '.sout'
         with open(output_file, 'r') as sgnnfile:
             for shift in sgnnfile:
-                iso.PredShifts.append(shift)
+                iso.PredShifts.append(float(shift.rstrip('\n')))
 
     os.chdir(jobdir)
 

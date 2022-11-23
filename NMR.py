@@ -376,7 +376,6 @@ def ReadPredictedShifts(Isomers, settings):
     for i, iso in enumerate(Isomers):
 
         shifts = iso.PredShifts
-        print(shifts)
 
         Cvalues = []
         Hvalues = []
