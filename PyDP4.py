@@ -48,6 +48,7 @@ import DP5 as DP5
 import MacroModel
 import NMR
 import SGNN_DP5
+import SGNN_isomers
 import Tinker
 
 DFTpackages = [['n', 'w', 'g', 'z', 'd'],['NWChem', 'NWChemZiggy', 'Gaussian', 'GaussianZiggy', 'GaussianDarwin']]
@@ -375,6 +376,9 @@ def main(settings):
 
             now = datetime.datetime.now()
             settings.StartTime = now.strftime('%d%b%H%M')
+
+            print("Setting up list of isomers...")
+            Isomers = SGNN_isomers.SetupIsomers(Isomers, settings)
 
             print("Setting up NMR predictions...")
             Isomers = SGNN_DP5.SetupNMRPred(Isomers, settings)
