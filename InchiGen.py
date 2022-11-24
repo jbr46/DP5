@@ -328,7 +328,7 @@ def GenDiastereomers(structf, nS, atoms=[]):
     ds_inchis = [FixTautProtons(f, i, aux) for i in ds_inchis]
     filenames = []
 
-    for ds in range(0, len(ds_inchis)):
+    for ds in range(1, len(ds_inchis) + 1):
 
         print("Isomer " + str(ds) + " inchi = " + ds_inchis[ds])
 
