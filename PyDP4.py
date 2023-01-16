@@ -44,10 +44,11 @@ import sys
 from pathlib import Path
 
 import DP4 as DP4
-import DP5 as DP5
+# import DP5 as DP5
 import MacroModel
 import NMR
 import SGNN_DP5
+import CASCADE_DP5
 import SGNN_isomers
 import Tinker
 
@@ -77,6 +78,8 @@ class Settings:
     # o for DFT optimization
     # e for DFT single-point energies
     # n for DFT NMR calculation
+    # l for SGNN NMR prediction
+    # p for CASCADE NMR prediction
     # s for computational and experimental NMR data extraction and stats analysis
     # w for DP5 probability calculation
     Solvent = ''  # solvent for DFT optimization and NMR calculation
@@ -308,6 +311,8 @@ def main(settings):
         DFT = ImportDFT(settings.DFT)
     elif ('l' in settings.Workflow):
         print("Obtaining predicted NMR data from SGNN model.")
+    elif ('p' in settings.Workflow):
+        print("Obtaining predicted NMR data from CASCADE model.")
     else:
         print('\nNo DFT calculations were requested. Skipping...')
 
@@ -386,6 +391,21 @@ def main(settings):
             Isomers = SGNN_DP5.RunNMRPred(Isomers, settings)
             print("Reading predictions from the output files...")
             Isomers = SGNN_DP5.ReadPred(Isomers)
+        
+        if ('p' in settings.Workflow):
+
+            now = datetime.datetime.now()
+            settings.StartTime = now.strftime('%d%b%H%M')
+
+            print("Setting up list of isomers...")
+            Isomers = SGNN_isomers.SetupIsomers(Isomers, settings)
+
+            print("Setting up NMR predictions...")
+            Isomers = CASCADE_DP5.SetupCNMRPred(Isomers, settings)
+            print("Running NMR predictions...")
+            Isomers = CASCADE_DP5.RunCNMRPred(Isomers, settings)
+            print("Reading predictions from the output files...")
+            Isomers = CASCADE_DP5.ReadCPred(Isomers)
 
     else:
         # Read DFT optimized geometries, if requested
@@ -404,7 +424,7 @@ def main(settings):
             Isomers = DFT.ReadEnergies(Isomers, settings)
 
     if ((NMR.NMRDataValid(Isomers)) or ('n' not in settings.Workflow)) \
-        and ('l' not in settings.Workflow):
+        and ('l' not in settings.Workflow) and ('p' not in settings.Workflow):
         print('\nNo NMR data calculated, quitting...')
         quit()
 
@@ -422,7 +442,7 @@ def main(settings):
             print("Conformation data:")
             NMR.PrintConformationData(Isomers)
             """
-        elif ('l' in settings.Workflow):
+        elif ('l' in settings.Workflow) or ('p' in settings.Workflow):
             print("\nConverting predicted shift list to lists assigned by atom")
             Isomers = NMR.ReadPredictedShifts(Isomers, settings)
 
