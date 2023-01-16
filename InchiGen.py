@@ -328,9 +328,9 @@ def GenDiastereomers(structf, nS, atoms=[]):
     ds_inchis = [FixTautProtons(f, i, aux) for i in ds_inchis]
     filenames = []
 
-    for ds in range(0, len(ds_inchis)):
+    for ds in range(len(ds_inchis)):
 
-        print("Isomer " + str(ds) + " inchi = " + ds_inchis[ds])
+        print("Isomer " + str(ds + 1) + " inchi = " + ds_inchis[ds])
 
         Inchi2Struct(ds_inchis[ds], f[:-4] + str(ds + 1), aux)
         RestoreNumsSDF(f[:-4] + str(ds + 1) + '.sdf', f, aux)
