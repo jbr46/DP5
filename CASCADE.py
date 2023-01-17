@@ -64,13 +64,24 @@ def prediction(save_folder, path_csv):
             pass
 
         predictions = pd.concat([pred_data_C, pred_data_H])
-        print(predictions)
 
         # TODO:
         # Need to save the results of the NMR prediction into output files, ordered by the atom index. 
         # Need to fill in zeros for atoms other than C and H.
-        for count, idx, shift in enumerate(zip(predictions.atom_index, predictions.Shift)):
-            pass
+        name = str(ID) + ".cout"
+        output_file = os.path.join(save_folder, name)
+        with open(output_file, "w",  encoding='utf-8', errors='ignore') as output:
+            idx = 1
+            for label, shift in zip(predictions.atom_index, predictions.Shift):
+                while idx < label:
+                    output.write(str(0))
+                    output.write('\n')
+                    idx += 1
+                output.write(str(shift))
+                output.write('\n')
+                idx += 1
+
+            
 
 
 
