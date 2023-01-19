@@ -1,15 +1,9 @@
-## RUN Calculations
-# For some reason I get an error when running main_execute(data_df, save_folder)
-## but here it works fine
-
 import pandas as pd
 from tqdm import tqdm
 import glob
-from rdkit.Chem import MolFromMolFile
-from execution import *
-# load_std_mean, save_as_npy_for_13C, save_as_npy_for_1H, \
-#   save_results_sdf_file, load_model
-from helpers import *
+from rdkit.Chem import MolFromMolFile, AddHs
+from execution import load_std_mean, save_as_npy_for_13C, save_as_npy_for_1H, \
+  load_model, inference_C, inference_H, create_shift_list, save_results
 
 def prediction(save_folder, path_csv):
   data_df = pd.read_csv(path_csv)
@@ -49,7 +43,7 @@ def prediction(save_folder, path_csv):
 
         ############## Reconstruction ##############
 
-        mol = Chem.AddHs(mol)
+        mol = AddHs(mol)
         final_list = create_shift_list(mol, x_h_connectivity_dict, test_y_pred_C, test_y_pred_H)
 
         save_results(save_folder, ID, final_list)
