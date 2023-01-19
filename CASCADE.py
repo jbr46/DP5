@@ -1,21 +1,8 @@
 import pandas as pd
-import numpy as np
-from rdkit import Chem
-from nfp.preprocessing import MolAPreprocessor, GraphSequence
 
-import keras
-import keras.backend as K
+from keras.models import load_model
 
-from keras.callbacks import ModelCheckpoint, CSVLogger, LearningRateScheduler
-
-from keras.layers import (Input, Embedding, Dense, BatchNormalization,
-                                 Concatenate, Multiply, Add)
-
-from keras.models import Model, load_model
-
-from nfp.layers.layers import (MessageLayer, Squeeze, EdgeNetwork,
-                               ReduceBondToPro, ReduceBondToAtom, GatherAtomToBond, ReduceAtomToPro)
-from nfp.layers.wrappers import GRUStep
+from nfp.layers.layers import (Squeeze, ReduceBondToAtom, GatherAtomToBond, ReduceAtomToPro)
 from nfp.models.models import GraphModel
 from cascade.apply import predict_NMR_C,predict_NMR_H
 
@@ -27,9 +14,6 @@ def prediction(save_folder, path_csv):
     # modelpath_H = os.path.join('cascade', 'trained_model', 'best_model_H_DFTNN.hdf5')
     modelpath_C = '/users/benji/dp5/cascade/trained_model/best_model.hdf5'
     modelpath_H = '/users/benji/dp5/cascade/trained_model/best_model_H_DFTNN.hdf5'
-
-    batch_size = 32
-    atom_means = pd.Series(np.array([0,0,97.74193,0,0,0,0,0,0,0]).astype(np.float64), name='shift')
 
     # Load the C and H NMR prediction models
     NMR_model_C = load_model(modelpath_C, custom_objects={'GraphModel': GraphModel,
@@ -48,7 +32,7 @@ def prediction(save_folder, path_csv):
     data.columns
 
     # Loop over all the candidate structures
-    for i, ID in enumerate(data.id):
+    for ID in data.id:
         # C predictions
         pred_data_C = pd.DataFrame()
         mols, weightedPrediction, spreadShift = predict_NMR_C(ID, NMR_model_C)
@@ -57,12 +41,9 @@ def prediction(save_folder, path_csv):
 
         # H predictions
         pred_data_H = pd.DataFrame()
-        try:
-            mols, weightedPrediction, spreadShift = predict_NMR_H(ID, NMR_model_H)
-            weightedPrediction['ID'] = ID
-            pred_data_H = pd.concat([pred_data_H, weightedPrediction])
-        except:
-            pass
+        mols, weightedPrediction, spreadShift = predict_NMR_H(ID, NMR_model_H)
+        weightedPrediction['ID'] = ID
+        pred_data_H = pd.concat([pred_data_H, weightedPrediction])
 
         predictions = pd.concat([pred_data_C, pred_data_H])
 

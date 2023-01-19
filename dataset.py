@@ -14,7 +14,7 @@ class GraphDataset():
 
 
     def load(self):
-        [mol_dict] = np.load(f'/home/jbr46/DP5/data/nmrshiftdb2_graph_{self.graph_representation}_{self.target}.npz', allow_pickle=True)['data']
+        [mol_dict] = np.load(f'/users/benji/DP5/data/nmrshiftdb2_graph_{self.graph_representation}_{self.target}.npz', allow_pickle=True)['data']
 
         self.n_node = mol_dict['n_node']
         self.n_edge = mol_dict['n_edge']
