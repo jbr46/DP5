@@ -49,7 +49,7 @@ import MacroModel
 import NMR
 import SGNN_DP5
 import CASCADE_DP5
-import SGNN_isomers
+import prediction_isomers
 import Tinker
 
 DFTpackages = [['n', 'w', 'g', 'z', 'd'],['NWChem', 'NWChemZiggy', 'Gaussian', 'GaussianZiggy', 'GaussianDarwin']]
@@ -204,6 +204,17 @@ def main(settings):
     print("NMR file: " + str(settings.NMRsource))
     print("Workflow: " + str(settings.Workflow))
 
+    if 'd' in settings.Workflow:
+        if ('p' in settings.Workflow) or ('l' in settings.Workflow):
+            print("\nBoth DFT NMR calculation and CASCADE/SGNN NMR prediction requested, quitting...")
+
+            quit()
+
+    elif ('p' in settings.Workflow) and ('l' in settings.Workflow):
+            print('\nBoth CASCADE and SGNN NMR prediction requested, quitting...')
+    
+    
+
     # Read in any text inputs and add these to the input file list
 
     import StructureInput
@@ -262,6 +273,13 @@ def main(settings):
 
     # Create isomer data structures
     Isomers = [Isomer(f.split('.sdf')[0]) for f in settings.InputFiles]
+
+    # Check that molecular composition is permissible if CASCADE requested
+    if ('p' in settings.Workflow):
+        if not prediction_isomers.CheckComposition(Isomers):
+            print("\nMolecule contains atoms other than C, H, N, O, P, S, F, Cl. CASCADE cannot be used for NMR prediction. Quitting...")
+
+            quit()
 
     print("Assuming all computations are done? ... ", settings.AssumeDone)
     print("Using preexisting NMR data? ... ", settings.UseExistingInputs)
@@ -383,7 +401,7 @@ def main(settings):
             settings.StartTime = now.strftime('%d%b%H%M')
 
             print("Setting up list of isomers...")
-            Isomers = SGNN_isomers.SetupIsomers(Isomers, settings)
+            Isomers = prediction_isomers.SetupIsomers(Isomers, settings)
 
             print("Setting up NMR predictions...")
             Isomers = SGNN_DP5.SetupNMRPred(Isomers, settings)
@@ -398,7 +416,7 @@ def main(settings):
             settings.StartTime = now.strftime('%d%b%H%M')
 
             print("Setting up list of isomers...")
-            Isomers = SGNN_isomers.SetupIsomers(Isomers, settings)
+            Isomers = prediction_isomers.SetupIsomers(Isomers, settings)
 
             print("Setting up NMR predictions...")
             Isomers = CASCADE_DP5.SetupCNMRPred(Isomers, settings)

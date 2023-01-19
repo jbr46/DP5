@@ -53,7 +53,3 @@ def prediction(save_folder, path_csv):
         final_list = create_shift_list(mol, x_h_connectivity_dict, test_y_pred_C, test_y_pred_H)
 
         save_results(save_folder, ID, final_list)
-  # Delete the normal SDF files
-  # flist_filter = [f for f in flist if not "*.sout" in f]
-  # for i in flist_filter:
-  #   os.remove(i)

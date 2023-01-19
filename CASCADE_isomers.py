@@ -20,22 +20,8 @@ def SetupIsomers(Isomers, settings):
 
 def ReadIsomer(name, settings):
     atoms_list = []
-    # Using openbabel
-    # AN_to_atom = {
-    #     1: 'H',
-    #     6: 'C'
-    # }
-    # isomer = next(pybel.readfile("sdf", name + ".sdf"))
-    # for atom in pybel.Molecule(isomer).atoms:
-    #     if atom.atomicnum in AN_to_atom:
-    #         atoms_list.append(AN_to_atom[atom.atomicnum])
-    #     else:
-    #         atoms_list.append('_')
-
-    # Using rdkit
     mol = MolFromMolFile(name + '.sdf')
     mol = rdmolops.AddHs(mol)
     for atom in mol.GetAtoms():
         atoms_list.append(atom.GetSymbol())
-
     return atoms_list
