@@ -38,15 +38,26 @@ def load_model(target, save_path):
 
     node_dim = data_sample.node_attr.shape[1]
     edge_dim = data_sample.edge_attr.shape[1]
-    net = nmr_mpnn_PROPOSED(node_dim, edge_dim, readout_mode, node_embedding_dim, readout_n_hidden_dim).cuda()
+    net = nmr_mpnn_PROPOSED(node_dim, edge_dim, readout_mode, node_embedding_dim, readout_n_hidden_dim)
 
     if target == "1H":
-        model_path = "/home/jbr46/nmr_sgnn/model/1H_sparsified_proposed_proposed_set2set_1.pt"
-        net.load_state_dict(torch.load(model_path))
+        model_path = "/users/benji/DP5/model/1H_sparsified_proposed_proposed_set2set_1.pt"
+        net.load_state_dict(torch.load(model_path, map_location='cpu'))
     elif target == "13C":
-        model_path = "/home/jbr46/nmr_sgnn/model/13C_sparsified_proposed_proposed_set2set_1.pt"
-        net.load_state_dict(torch.load(model_path))
+        model_path = "/users/benji/DP5/model/13C_sparsified_proposed_proposed_set2set_1.pt"
+        net.load_state_dict(torch.load(model_path, map_location='cpu'))
     return net
+
+    # For use on jmgpc02 when cuda available
+    # net = nmr_mpnn_PROPOSED(node_dim, edge_dim, readout_mode, node_embedding_dim, readout_n_hidden_dim).cuda()
+
+    # if target == "1H":
+    #     model_path = "/home/jbr46/nmr_sgnn/model/1H_sparsified_proposed_proposed_set2set_1.pt"
+    #     net.load_state_dict(torch.load(model_path))
+    # elif target == "13C":
+    #     model_path = "/home/jbr46/nmr_sgnn/model/13C_sparsified_proposed_proposed_set2set_1.pt"
+    #     net.load_state_dict(torch.load(model_path))
+    # return net
 
 ########################################## C related ##########################################
 

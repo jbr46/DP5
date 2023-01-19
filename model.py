@@ -76,9 +76,14 @@ def inference(net, test_loader, train_y_mean, train_y_std, n_forward_pass = 30, 
     start_time = time.time()
     with torch.no_grad():
         for batchidx, batchdata in enumerate(test_loader):
-            inputs = batchdata[0].to(cuda)
-            n_nodes = batchdata[1].to(cuda)
-            masks = batchdata[-1].to(cuda)
+            inputs = batchdata[0]
+            n_nodes = batchdata[1]
+            masks = batchdata[-1]
+
+            # For use on jmgpc02 when cuda available
+            # inputs = batchdata[0].to(cuda)
+            # n_nodes = batchdata[1.to(cuda)
+            # masks = batchdata[-1].to(cuda)
 
             mean_list = []
 
