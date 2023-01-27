@@ -400,10 +400,10 @@ def ReadPredictedShifts(Isomers, settings):
         Isomers[i].Clabels = Clabels
         Isomers[i].Hlabels = Hlabels
 
-        print('C shifts for isomer ' + str(i) + ": ")
+        print('C shifts for isomer ' + str(i + 1) + ": ")
         print(', '.join(['{0:.3f}'.format(x) for x in Isomers[i].Cshifts]))
 
-        print('H shifts for isomer ' + str(i) + ": ")
+        print('H shifts for isomer ' + str(i + 1) + ": ")
         print(', '.join(['{0:.3f}'.format(x) for x in Isomers[i].Hshifts]))
 
         # for conf in iso.ConformerShieldings:
@@ -458,10 +458,10 @@ def CalcNMRShifts(Isomers, settings):
         Isomers[i].Clabels = Clabels
         Isomers[i].Hlabels = Hlabels
 
-        print('C shifts for isomer ' + str(i) + ": ")
+        print('C shifts for isomer ' + str(i + 1) + ": ")
         print(', '.join(['{0:.3f}'.format(x) for x in Isomers[i].Cshifts]))
 
-        print('H shifts for isomer ' + str(i) + ": ")
+        print('H shifts for isomer ' + str(i + 1) + ": ")
         print(', '.join(['{0:.3f}'.format(x) for x in Isomers[i].Hshifts]))
 
         for conf in iso.ConformerShieldings:
