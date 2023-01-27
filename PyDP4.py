@@ -227,6 +227,8 @@ def main(settings):
 
     if settings.InChIs:
         settings.InputFiles.extend(StructureInput.GenerateSDFFromTxt(settings.InChIs, 'InChI'))
+    
+    print(settings.InputFiles)
 
     # Clean up input files if c in workflow - this generates a new set of 3d coordinates as a starting point
 
@@ -403,10 +405,12 @@ def main(settings):
             print("Setting up list of isomers...")
             Isomers = prediction_isomers.SetupIsomers(Isomers, settings)
 
-            print("Setting up NMR predictions...")
-            Isomers = SGNN_DP5.SetupNMRPred(Isomers, settings)
-            print("Running NMR predictions...")
-            Isomers = SGNN_DP5.RunNMRPred(Isomers, settings)
+            if not settings.UseExistingInputs:
+                print("Setting up NMR predictions...")
+                Isomers = SGNN_DP5.SetupNMRPred(Isomers, settings)
+                print("Running NMR predictions...")
+                Isomers = SGNN_DP5.RunNMRPred(Isomers, settings)
+        
             print("Reading predictions from the output files...")
             Isomers = SGNN_DP5.ReadPred(Isomers)
         
@@ -418,10 +422,12 @@ def main(settings):
             print("Setting up list of isomers...")
             Isomers = prediction_isomers.SetupIsomers(Isomers, settings)
 
-            print("Setting up NMR predictions...")
-            Isomers = CASCADE_DP5.SetupCNMRPred(Isomers, settings)
-            print("Running NMR predictions...")
-            Isomers = CASCADE_DP5.RunCNMRPred(Isomers, settings)
+            if not settings.UseExistingInputs:
+                print("Setting up NMR predictions...")
+                Isomers = CASCADE_DP5.SetupCNMRPred(Isomers, settings)
+                print("Running NMR predictions...")
+                Isomers = CASCADE_DP5.RunCNMRPred(Isomers, settings)
+
             print("Reading predictions from the output files...")
             Isomers = CASCADE_DP5.ReadCPred(Isomers)
 
@@ -723,8 +729,9 @@ if __name__ == '__main__':
     parser.add_argument('-w', '--workflow', help="Defines which steps to include in the workflow, " +
                                                  "can contain g for generate diastereomers, m for molecular mechanics conformational search, " +
                                                  "o for DFT optimization, e for DFT single-point energies, n for DFT NMR calculation, " +
-                                                 "l for SGNN NMR prediction, "
-                                                 "a for computational and experimental NMR data extraction " +
+                                                 "l for SGNN NMR prediction, " +
+                                                 "p for CASCADE NMR prediction, " +
+                                                 "a for computational and experimental NMR data extraction, " +
                                                  "s for computational and experimental NMR data extraction and stats analysis, default is 'gmns'",
                         default=settings.Workflow)
     parser.add_argument('-m', '--mm', help="Select molecular mechanics program,\

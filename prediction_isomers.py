@@ -8,6 +8,7 @@ import sys
 import time
 
 from openbabel import pybel
+from rdkit import Chem
 from rdkit.Chem import MolFromMolFile, rdmolops
 
 

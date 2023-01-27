@@ -194,7 +194,7 @@ def Inchi2Struct(inchi, f, aux):
     m = AllChem.AddHs(m, addCoords=True)
 
     AllChem.EmbedMolecule(m)
-
+    
     save3d = Chem.SDWriter(fullf + '.sdf')
 
     save3d.write(m)
@@ -319,9 +319,6 @@ def GenDiastereomers(structf, nS, atoms=[]):
 
     inchi, aux = GetInchi(f)
 
-
-    i,a = GetInchi(f)
-
     ds_inchis = GenDSInchis(inchi)
 
 
@@ -334,6 +331,7 @@ def GenDiastereomers(structf, nS, atoms=[]):
 
         Inchi2Struct(ds_inchis[ds], f[:-4] + str(ds + 1), aux)
         RestoreNumsSDF(f[:-4] + str(ds + 1) + '.sdf', f, aux)
+
         filenames.append(f[:-4] + str(ds + 1))
 
     return filenames
