@@ -188,9 +188,14 @@ class Isomer:
         self.ConformerCShifts = [] # list of calculated C NMR shifts lists for every conformer
         self.ConformerHShifts = [] # list of calculated H NMR shifts lists for every conformer
         self.BoltzmannShieldings = []  # Boltzmann weighted NMR shielding constant list for the isomer
-        self.PredShifts = [] # SGNN predicted shift list for the isomer
+        self.PredShifts_SGNN = [] # SGNN predicted shift list for the isomer
+        self.PredShifts_CASCADE = [] # CASCADE predicted shift list for the isomer
         self.Cshifts = []  # Calculated C NMR shifts
         self.Hshifts = []  # Calculated H NMR
+        self.Cshifts_SGNN = [] # SGNN predicted C NMR shifts
+        self.Cshifts_CASCADE = [] # CASCADE predicted C NMR shifts
+        self.Hshifts_SGNN = [] # SGNN predicted H NMR shifts
+        self.Hshifts_CASCADE = [] # CASCADE predicted H NMR shifts
         self.Clabels = []
         self.Hlabels = []
         self.Cexp = []  # Experimental C NMR shifts
@@ -397,7 +402,7 @@ def main(settings):
             for iso in Isomers:
                 print(iso.InputFile + ": " + str(iso.DFTEnergies))
         
-        if ('l' in settings.Workflow):
+        if ('l' in settings.Workflow) or ('b' in settings.Workflow):
 
             now = datetime.datetime.now()
             settings.StartTime = now.strftime('%d%b%H%M')
@@ -414,7 +419,7 @@ def main(settings):
             print("Reading predictions from the output files...")
             Isomers = SGNN_DP5.ReadPred(Isomers)
         
-        if ('p' in settings.Workflow):
+        if ('p' in settings.Workflow) or ('b' in settings.Workflow):
 
             now = datetime.datetime.now()
             settings.StartTime = now.strftime('%d%b%H%M')
@@ -466,9 +471,15 @@ def main(settings):
             print("Conformation data:")
             NMR.PrintConformationData(Isomers)
             """
-        elif ('l' in settings.Workflow) or ('p' in settings.Workflow):
-            print("\nConverting predicted shift list to lists assigned by atom")
+        if ('l' in settings.Workflow) or ('p' in settings.Workflow):
             Isomers = NMR.ReadPredictedShifts(Isomers, settings)
+
+        if ('b' in settings.Workflow):
+            print("\nConverting SGNN predicted shift list to lists assigned by atom")
+            Isomers = NMR.ReadPredictedShifts_SGNN(Isomers, settings)
+
+            print("\nConverting CASCADE predicted shift list to lists assigned by atom")
+            Isomers = NMR.ReadPredictedShifts_CASCADE(Isomers, settings)
 
         print('\nReading experimental NMR data...')
         NMRData = NMR.NMRData(settings)
@@ -591,6 +602,10 @@ def main(settings):
         if len(Isomers) < 2:
 
             print("Multiple structures required for DP4 probability calculations...")
+
+        elif 'b' in settings.Workflow:
+
+            print('\nCalculating DP4 probabilities using SGNN and CASCADE shifts...')
 
         else:
 

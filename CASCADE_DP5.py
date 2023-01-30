@@ -52,7 +52,7 @@ def ReadCPred(Isomers):
         output_file = iso.BaseName + '.cout'
         with open(output_file, 'r') as cascadefile:
             for shift in cascadefile:
-                iso.PredShifts.append(float(shift.rstrip('\n')))
+                iso.PredShifts_CASCADE.append(float(shift.rstrip('\n')))
 
     os.chdir(jobdir)
 

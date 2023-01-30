@@ -24,9 +24,13 @@ stdevH = 0.18731058105269952
 class DP4data:
     def __init__(self):
         self.Cshifts = []  # Carbon shifts used in DP4 calculation
+        self.Cshifts_CASCADE = [] # CASCADE carbon shifts used in DP4 calculation
+        self.Cshifts_SGNN = [] # SGNN carbon shifts used in DP4 calculation
         self.Cexp = []  # Carbon experimental shifts used in DP4 calculation
         self.Clabels = []  # Carbon atom labels
         self.Hshifts = []  # Proton shifts used in DP4 calculation
+        self.Hshifts_CASCADE = [] # CASCADE proton shifts used in DP4 calculation
+        self.Hshifts_SGNN = [] # SGNN proton shifts used in DP4 calculation
         self.Hexp = []  # Proton experimental shifts used in DP4 calculation
         self.Hlabels = []  # Proton atom labels
         self.Cscaled = []  # Internally scaled carbon shifts
@@ -38,6 +42,8 @@ class DP4data:
         self.CDP4probs = []  # Carbon DP4 probabilities
         self.HDP4probs = []  # Proton DP4 probabilities
         self.DP4probs = []  # combined Carbon and Proton DP4 probabilities
+        self.DP4probs_SGNN = [] # combined probabilities calculated using SGNN predicted shifts
+        self.DP4probs_CASCADE = [] # combined probabilities calculated using CASCADE predicted shifts
         self.output = str()  # final DP4 output
 
 
