@@ -432,7 +432,7 @@ def main(settings):
                 Isomers = CASCADE_DP5.RunCNMRPred(Isomers, settings)
 
             print("Reading predictions from the output files...")
-            Isomers = CASCADE_DP5.ReadCPred(Isomers)
+            Isomers = CASCADE_DP5.ReadCPred(Isomers, settings)
 
     else:
         # Read DFT optimized geometries, if requested

@@ -43,16 +43,27 @@ def RunCNMRPred(Isomers, settings):
     return Isomers
 
 
-def ReadCPred(Isomers):
+def ReadCPred(Isomers, settings):
 
     jobdir = os.getcwd()
     os.chdir('nmr')
 
-    for iso in Isomers:
-        output_file = iso.BaseName + '.cout'
-        with open(output_file, 'r') as cascadefile:
-            for shift in cascadefile:
-                iso.PredShifts_CASCADE.append(float(shift.rstrip('\n')))
+    if 'b' in settings.Workflow:
+
+        for iso in Isomers:
+            output_file = iso.BaseName + '.cout'
+            with open(output_file, 'r') as cascadefile:
+                for shift in cascadefile:
+                    iso.PredShifts_CASCADE.append(float(shift.rstrip('\n')))
+
+    else:
+
+        for iso in Isomers:
+            output_file = iso.BaseName + '.cout'
+            with open(output_file, 'r') as cascadefile:
+                for shift in cascadefile:
+                    iso.PredShifts.append(float(shift.rstrip('\n')))
+
 
     os.chdir(jobdir)
 

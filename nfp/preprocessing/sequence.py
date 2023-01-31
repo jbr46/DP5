@@ -1,7 +1,7 @@
 import numpy as np
 from random import shuffle
 
-from keras.utils import Sequence
+from tensorflow.keras.utils import Sequence
 
 
 class GraphSequence(Sequence):
