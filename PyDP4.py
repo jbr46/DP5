@@ -188,13 +188,11 @@ class Isomer:
         self.ConformerCShifts = [] # list of calculated C NMR shifts lists for every conformer
         self.ConformerHShifts = [] # list of calculated H NMR shifts lists for every conformer
         self.BoltzmannShieldings = []  # Boltzmann weighted NMR shielding constant list for the isomer
-        self.PredShifts_SGNN = [] # SGNN predicted shift list for the isomer
+        self.PredShifts = [] # SGNN predicted shift list for the isomer
         self.PredShifts_CASCADE = [] # CASCADE predicted shift list for the isomer
         self.Cshifts = []  # Calculated C NMR shifts
         self.Hshifts = []  # Calculated H NMR
-        self.Cshifts_SGNN = [] # SGNN predicted C NMR shifts
         self.Cshifts_CASCADE = [] # CASCADE predicted C NMR shifts
-        self.Hshifts_SGNN = [] # SGNN predicted H NMR shifts
         self.Hshifts_CASCADE = [] # CASCADE predicted H NMR shifts
         self.Clabels = []
         self.Hlabels = []
@@ -476,7 +474,7 @@ def main(settings):
 
         if ('b' in settings.Workflow):
             print("\nConverting SGNN predicted shift list to lists assigned by atom")
-            Isomers = NMR.ReadPredictedShifts_SGNN(Isomers, settings)
+            Isomers = NMR.ReadPredictedShifts(Isomers, settings)
 
             print("\nConverting CASCADE predicted shift list to lists assigned by atom")
             Isomers = NMR.ReadPredictedShifts_CASCADE(Isomers, settings)
@@ -606,6 +604,31 @@ def main(settings):
         elif 'b' in settings.Workflow:
 
             print('\nCalculating DP4 probabilities using SGNN and CASCADE shifts...')
+
+            # Calculate DP4 probabilities from SGNN predicted shifts
+
+            DP4data_SGNN = DP4.DP4data()
+            DP4data_SGNN = DP4.ProcessIsomers(DP4data_SGNN, Isomers)
+            DP4data_SGNN = DP4.InternalScaling(DP4data_SGNN)
+            DP4data_SGNN = DP4.CalcProbs(DP4data_SGNN, settings)
+            DP4data_SGNN = DP4.CalcDP4(DP4data_SGNN)
+
+            # Calculate DP4 probabilities from CASCADE predicted shifts
+
+            DP4data_CASCADE = DP4.DP4data()
+            DP4data_CASCADE = DP4.ProcessIsomers_CASCADE(DP4data_CASCADE, Isomers)
+            DP4data_CASCADE = DP4.InternalScaling(DP4data)
+            DP4data_CASCADE = DP4.CalcProbs(DP4data_CASCADE, settings)
+            DP4data_CASCADE = DP4.CalcDP4(DP4data_CASCADE)
+
+            # Combine SGNN and CASCADE predicted DP4 probabilities
+
+            DP4data_combined = DP4.CalcDP4_SGNN_CASCADE(DP4data_SGNN, DP4data_CASCADE)
+
+            # Print combined output
+
+            DP4data_combined = DP4.MakeOutput(DP4data_combined, Isomers, settings)
+
 
         else:
 
