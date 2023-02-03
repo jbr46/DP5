@@ -451,7 +451,7 @@ def main(settings):
             Isomers = DFT.ReadEnergies(Isomers, settings)
 
     if ((NMR.NMRDataValid(Isomers)) or ('n' not in settings.Workflow)) \
-        and ('l' not in settings.Workflow) and ('p' not in settings.Workflow):
+        and ('l' not in settings.Workflow) and ('p' not in settings.Workflow) and ('b' not in settings.Workflow):
         print('\nNo NMR data calculated, quitting...')
         quit()
 
@@ -617,17 +617,17 @@ def main(settings):
 
             DP4data_CASCADE = DP4.DP4data()
             DP4data_CASCADE = DP4.ProcessIsomers_CASCADE(DP4data_CASCADE, Isomers)
-            DP4data_CASCADE = DP4.InternalScaling(DP4data)
+            DP4data_CASCADE = DP4.InternalScaling(DP4data_CASCADE)
             DP4data_CASCADE = DP4.CalcProbs(DP4data_CASCADE, settings)
             DP4data_CASCADE = DP4.CalcDP4(DP4data_CASCADE)
 
             # Combine SGNN and CASCADE predicted DP4 probabilities
 
-            DP4data_combined = DP4.CalcDP4_SGNN_CASCADE(DP4data_SGNN, DP4data_CASCADE)
+            DP4data = DP4.CalcDP4_SGNN_CASCADE(DP4data_SGNN, DP4data_CASCADE)
 
             # Print combined output
 
-            DP4data_combined = DP4.MakeOutput(DP4data_combined, Isomers, settings)
+            DP4data = DP4.MakeOutput_SGNN_CASCADE(DP4data, DP4data_SGNN, DP4data_CASCADE, Isomers, settings)
 
 
         else:

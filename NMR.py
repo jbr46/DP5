@@ -400,10 +400,10 @@ def ReadPredictedShifts(Isomers, settings):
         Isomers[i].Clabels = Clabels
         Isomers[i].Hlabels = Hlabels
 
-        print('C shifts predicted by CASCADE for isomer ' + str(i + 1) + ": ")
+        print('C shifts predicted by SGNN for isomer ' + str(i + 1) + ": ")
         print(', '.join(['{0:.3f}'.format(x) for x in Isomers[i].Cshifts]))
 
-        print('H shifts predicted by CASCADE for isomer ' + str(i + 1) + ": ")
+        print('H shifts predicted by SGNN for isomer ' + str(i + 1) + ": ")
         print(', '.join(['{0:.3f}'.format(x) for x in Isomers[i].Hshifts]))
 
     return Isomers
@@ -439,10 +439,10 @@ def ReadPredictedShifts_CASCADE(Isomers, settings):
         Isomers[i].Hlabels = Hlabels
 
         print('C shifts predicted by CASCADE for isomer ' + str(i + 1) + ": ")
-        print(', '.join(['{0:.3f}'.format(x) for x in Isomers[i].Cshifts]))
+        print(', '.join(['{0:.3f}'.format(x) for x in Isomers[i].Cshifts_CASCADE]))
 
         print('H shifts predicted by CASCADE for isomer ' + str(i + 1) + ": ")
-        print(', '.join(['{0:.3f}'.format(x) for x in Isomers[i].Hshifts]))
+        print(', '.join(['{0:.3f}'.format(x) for x in Isomers[i].Hshifts_CASCADE]))
 
     return Isomers
 

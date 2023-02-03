@@ -13,6 +13,7 @@ from scipy import stats
 import bisect
 import os
 import numpy as np
+import copy
 
 # Standard DP4 parameters
 meanC = 0.0
@@ -369,7 +370,13 @@ def CalcDP4_SGNN_CASCADE(DP4data_SGNN, DP4data_CASCADE):
 
     # Calculate Combined DP4 probabilities
 
-    DP4data_combined = DP4data_SGNN.copy()
+    # Initialise combined DP4 data object, set the probabilities to an empty list so \
+    # we don't end up with more probabilities than isomers
+
+    DP4data_combined = copy.deepcopy(DP4data_SGNN)
+    DP4data_combined.HDP4probs = []
+    DP4data_combined.CDP4probs = []
+    DP4data_combined.DP4probs = []
 
     # Combine SGNN probs and CASCADE probs for proton
 
@@ -393,7 +400,7 @@ def CalcDP4_SGNN_CASCADE(DP4data_SGNN, DP4data_CASCADE):
 
     CASCADE = sum(DP4data_CASCADE.CDP4probs)
 
-    total = sum(DP4data.CDP4probs)
+    total = sum(DP4data_combined.CDP4probs)
 
     DP4data_combined.CDP4probs = [prob / total for prob in DP4data_combined.CDP4probs]
 
@@ -406,7 +413,7 @@ def CalcDP4_SGNN_CASCADE(DP4data_SGNN, DP4data_CASCADE):
 
     CASCADE = sum(DP4data_CASCADE.DP4probs)
 
-    total = sum(DP4data.DP4probs)
+    total = sum(DP4data_combined.DP4probs)
 
     DP4data_combined.DP4probs = [prob / total for prob in DP4data_combined.DP4probs]
 
@@ -526,52 +533,71 @@ def MakeOutput(DP4Data, Isomers, Settings):
 
 
 
-def MakeOutput_SGNN_CASCADE(DP4Data_SGNN, DP4Data_CASCADE, Isomers, Settings):
+def MakeOutput_SGNN_CASCADE(DP4Data, DP4Data_SGNN, DP4Data_CASCADE, Isomers, Settings):
     # add some info about the calculation
 
     DP4Data.output += Settings.InputFiles[0] + "\n"
-
-    DP4Data.output += "\n" + "Solvent = " + Settings.Solvent
-
-    DP4Data.output += "\n" + "Force Field = " + Settings.ForceField + "\n"
-
-    if 'o' in Settings.Workflow:
-        DP4Data.output += "\n" + "DFT optimisation Functional = " + Settings.oFunctional
-        DP4Data.output += "\n" + "DFT optimisation Basis = " + Settings.oBasisSet
-
-    if 'e' in Settings.Workflow:
-        DP4Data.output += "\n" + "DFT energy Functional = " + Settings.eFunctional
-        DP4Data.output += "\n" + "DFT energy Basis = " + Settings.eBasisSet
-
-    if 'n' in Settings.Workflow:
-        DP4Data.output += "\n" + "DFT NMR Functional = " + Settings.nFunctional
-        DP4Data.output += "\n" + "DFT NMR Basis = " + Settings.nBasisSet
 
     if Settings.StatsParamFile != "none":
         DP4Data.output += "\n\nStats model = " + Settings.StatsParamFile
 
     DP4Data.output += "\n\nNumber of isomers = " + str(len(Isomers))
 
-    c = 1
+    # Fill in the output with info about the SGNN calculation
 
-    for i in Isomers:
-        DP4Data.output += "\nNumber of conformers for isomer " + str(c) + " = " + str(len(i.Conformers))
+    PrintAssignment(DP4Data_SGNN)
 
-        c += 1
+    DP4Data.output += ("\n\nResults of DP4 using SGNN Proton: ")
 
-    PrintAssignment(DP4Data)
+    for i, p in enumerate(DP4Data_SGNN.HDP4probs):
+        DP4Data.output += ("\nIsomer " + str(i + 1) + ": " + format(p * 100, "4.1f") + "%")
 
-    DP4Data.output += ("\n\nResults of DP4 using Proton: ")
+    DP4Data.output += ("\n\nResults of DP4 using SGNN Carbon: ")
+
+    for i, p in enumerate(DP4Data_SGNN.CDP4probs):
+        DP4Data.output += ("\nIsomer " + str(i + 1) + ": " + format(p * 100, "4.1f") + "%")
+
+    DP4Data.output += ("\n\nResults of DP4 using SGNN: ")
+
+    for i, p in enumerate(DP4Data_SGNN.DP4probs):
+        DP4Data.output += ("\nIsomer " + str(i + 1) + ": " + format(p * 100, "4.1f") + "%")
+    
+    DP4Data.output += ("\n\n###################################")
+
+    # Fill in the output with info about the CASCADE calculation
+
+    PrintAssignment(DP4Data_CASCADE)
+
+    DP4Data.output += ("\n\nResults of DP4 using CASCADE Proton: ")
+
+    for i, p in enumerate(DP4Data_CASCADE.HDP4probs):
+        DP4Data.output += ("\nIsomer " + str(i + 1) + ": " + format(p * 100, "4.1f") + "%")
+
+    DP4Data.output += ("\n\nResults of DP4 using CASCADE Carbon: ")
+
+    for i, p in enumerate(DP4Data_CASCADE.CDP4probs):
+        DP4Data.output += ("\nIsomer " + str(i + 1) + ": " + format(p * 100, "4.1f") + "%")
+
+    DP4Data.output += ("\n\nResults of DP4 using CASCADE: ")
+
+    for i, p in enumerate(DP4Data_CASCADE.DP4probs):
+        DP4Data.output += ("\nIsomer " + str(i + 1) + ": " + format(p * 100, "4.1f") + "%")
+    
+    DP4Data.output += ("\n\n###################################")
+
+    # Fill in the output with info about the combined DP4 calculation
+
+    DP4Data.output += ("\n\nResults of DP4 using combined Proton: ")
 
     for i, p in enumerate(DP4Data.HDP4probs):
         DP4Data.output += ("\nIsomer " + str(i + 1) + ": " + format(p * 100, "4.1f") + "%")
 
-    DP4Data.output += ("\n\nResults of DP4 using Carbon: ")
+    DP4Data.output += ("\n\nResults of DP4 using combined Carbon: ")
 
     for i, p in enumerate(DP4Data.CDP4probs):
         DP4Data.output += ("\nIsomer " + str(i + 1) + ": " + format(p * 100, "4.1f") + "%")
 
-    DP4Data.output += ("\n\nResults of DP4: ")
+    DP4Data.output += ("\n\nResults of DP4 using SGNN and CASCADE: ")
 
     for i, p in enumerate(DP4Data.DP4probs):
         DP4Data.output += ("\nIsomer " + str(i + 1) + ": " + format(p * 100, "4.1f") + "%")
