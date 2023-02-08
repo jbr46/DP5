@@ -14,6 +14,7 @@ import bisect
 import os
 import numpy as np
 import copy
+from csv import writer
 
 # Standard DP4 parameters
 meanC = 0.0
@@ -528,6 +529,35 @@ def MakeOutput(DP4Data, Isomers, Settings):
     out.write(DP4Data.output)
 
     out.close()
+
+    # output results in csv format to data analysis file
+    proton = [Settings.InputFiles[0][:-2]] + [DP4Data.HDP4probs[0]] + sorted(DP4Data.HDP4probs[1:], key=lambda prob: -prob)
+    while len(proton) < 33:
+        proton.append('null')
+
+    carbon = [Settings.InputFiles[0][:-2]] + [DP4Data.CDP4probs[0]] + sorted(DP4Data.CDP4probs[1:], key=lambda prob: -prob)
+    while len(carbon) < 33:
+        carbon.append('null')
+
+    combined = [Settings.InputFiles[0][:-2]] + [DP4Data.DP4probs[0]] + sorted(DP4Data.DP4probs[1:], key=lambda prob: -prob)
+    while len(combined) < 33:
+        combined.append('null')
+    
+    rows = [proton, carbon, combined]
+
+    if ('l' in Settings.Workflow):
+        type = 'SGNN'
+    elif ('p' in Settings.Workflow):
+        type = 'CASCADE'
+
+    methods = ['proton', 'carbon', 'combined']
+
+    results_path = '/Users/benji/DP4_testing/data_' + type + '_'
+
+    for method, row in zip(methods, rows):
+        with open(results_path + method + '.csv', 'a') as results:
+            writer_object = writer(results)
+            writer_object.writerow(row)
 
     return DP4Data
 
