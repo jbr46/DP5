@@ -642,6 +642,10 @@ def main(settings):
 
             DP4data = DP4.MakeOutput(DP4data, Isomers, settings)
 
+        if ('v' in settings.Workflow):
+            
+            DP4data = DP4.SaveResults(DP4data, settings)
+
     else:
         print('\nNo DP4 analysis requested.')
 

@@ -530,6 +530,10 @@ def MakeOutput(DP4Data, Isomers, Settings):
 
     out.close()
 
+    return DP4Data
+
+def SaveResults(DP4Data, Settings):
+
     # output results in csv format to data analysis file
     proton = [Settings.InputFiles[0][:-2]] + [DP4Data.HDP4probs[0]] + sorted(DP4Data.HDP4probs[1:], key=lambda prob: -prob)
     while len(proton) < 33:
@@ -549,6 +553,8 @@ def MakeOutput(DP4Data, Isomers, Settings):
         type = 'SGNN'
     elif ('p' in Settings.Workflow):
         type = 'CASCADE'
+    elif ('b' in Settings.Workflow):
+        type = 'combined'
 
     methods = ['proton', 'carbon', 'combined']
 
