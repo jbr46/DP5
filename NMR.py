@@ -612,7 +612,7 @@ def RMSE(L1, L2):
         return math.sqrt(sum(L)/len(L))
 
 
-def PairwiseAssignment(Isomers,NMRData):
+def PairwiseAssignment(Isomers, NMRData, settings):
 
     # for each isomer sort the experimental and calculated shifts
 
@@ -643,8 +643,8 @@ def PairwiseAssignment(Isomers,NMRData):
         sortedCExp = sorted(NMRData.Cshifts, reverse=True)
         sortedHExp = sorted(NMRData.Hshifts, reverse=True)
 
-        assignedCExp = [''] * len(sortedCCalc)
-        assignedHExp = [''] * len(sortedHCalc)
+        assignedCExp = [1] * len(sortedCCalc)
+        assignedHExp = [1] * len(sortedHCalc)
 
         tempCCalcs = list(iso.Cshifts)
         tempHCalcs = list(iso.Hshifts)
@@ -656,33 +656,37 @@ def PairwiseAssignment(Isomers,NMRData):
 
         exp_ind = 0
 
-        for shift ,label in zip( sortedCCalc , sortedClabels):
+        if ('z' not in settings.Workflow):
 
-            if label not in NMRData.Omits:
+            for shift ,label in zip( sortedCCalc , sortedClabels):
 
-                ind = tempCCalcs.index(shift)
+                if label not in NMRData.Omits:
 
-                assignedCExp[ind] = sortedCExp[exp_ind]
+                    ind = tempCCalcs.index(shift)
 
-                tempCCalcs[ind] = ''
+                    assignedCExp[ind] = sortedCExp[exp_ind]
 
-                exp_ind += 1
+                    tempCCalcs[ind] = ''
+
+                    exp_ind += 1
 
         # Proton
 
         exp_ind = 0
 
-        for shift,label in zip( sortedHCalc,sortedHlabels):
+        if ('x' not in settings.Workflow):
 
-            if label not in NMRData.Omits:
+            for shift,label in zip( sortedHCalc,sortedHlabels):
 
-                ind = tempHCalcs.index(shift)
+                if label not in NMRData.Omits:
 
-                assignedHExp[ind] = sortedHExp[exp_ind]
+                    ind = tempHCalcs.index(shift)
 
-                tempHCalcs[ind] = ''
+                    assignedHExp[ind] = sortedHExp[exp_ind]
 
-                exp_ind += 1
+                    tempHCalcs[ind] = ''
+
+                    exp_ind += 1
 
         # update isomers class
 

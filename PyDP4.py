@@ -488,7 +488,7 @@ def main(settings):
 
             # performs a pairwise assignment
 
-            Isomers = NMR.PairwiseAssignment(Isomers, NMRData)
+            Isomers = NMR.PairwiseAssignment(Isomers, NMRData, settings)
 
             print('Cshifts: ' + str(NMRData.Cshifts))
             print('Hshifts: ' + str(NMRData.Hshifts))
@@ -774,7 +774,7 @@ if __name__ == '__main__':
                                                  "l for SGNN NMR prediction, " +
                                                  "p for CASCADE NMR prediction, " +
                                                  "b for SGNN/CASCADE combined NMR prediction/DP4 calculation," +
-                                                 "v for saving results of DP4 calculatiion to csv file," +
+                                                 "v for saving results of DP4 calculation to csv file," +
                                                  "a for computational and experimental NMR data extraction, " +
                                                  "s for computational and experimental NMR data extraction and stats analysis, default is 'gmns'",
                         default=settings.Workflow)
