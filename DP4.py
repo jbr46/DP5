@@ -534,21 +534,25 @@ def MakeOutput(DP4Data, Isomers, Settings):
 
 def SaveResults(DP4Data, Settings):
 
-    # output results in csv format to data analysis file
-    proton = [Settings.InputFiles[0][:-2]] + [DP4Data.HDP4probs[0]] + sorted(DP4Data.HDP4probs[1:], key=lambda prob: -prob)
-    while len(proton) < 33:
-        proton.append('null')
+    # For use with DP5 examples
+    carbon = [Settings.InputFiles[0][:-2]] + list(reversed(DP4Data.CDP4probs))
 
-    carbon = [Settings.InputFiles[0][:-2]] + [DP4Data.CDP4probs[0]] + sorted(DP4Data.CDP4probs[1:], key=lambda prob: -prob)
-    while len(carbon) < 33:
-        carbon.append('null')
 
-    combined = [Settings.InputFiles[0][:-2]] + [DP4Data.DP4probs[0]] + sorted(DP4Data.DP4probs[1:], key=lambda prob: -prob)
-    while len(combined) < 33:
-        combined.append('null')
+    # For use with DP4 examples
+    # # output results in csv format to data analysis file
+    # proton = [Settings.InputFiles[0][:-2]] + [DP4Data.HDP4probs[0]] + sorted(DP4Data.HDP4probs[1:], key=lambda prob: -prob)
+    # while len(proton) < 33:
+    #     proton.append('null')
+
+    # carbon = [Settings.InputFiles[0][:-2]] + [DP4Data.CDP4probs[0]] + sorted(DP4Data.CDP4probs[1:], key=lambda prob: -prob)
+    # # Get ordering correct for analysis of DP5 examples
+    # while len(carbon) < 33:
+    #     carbon.append('null')
+
+    # combined = [Settings.InputFiles[0][:-2]] + [DP4Data.DP4probs[0]] + sorted(DP4Data.DP4probs[1:], key=lambda prob: -prob)
+    # while len(combined) < 33:
+    #     combined.append('null')
     
-    rows = [proton, carbon, combined]
-
     if ('l' in Settings.Workflow):
         type = 'SGNN'
     elif ('p' in Settings.Workflow):
@@ -556,14 +560,23 @@ def SaveResults(DP4Data, Settings):
     elif ('b' in Settings.Workflow):
         type = 'combined'
 
-    methods = ['proton', 'carbon', 'combined']
+    # For use with DP5 test set in DP5_testing directory
+    results_path = '/Users/benji/DP5_testing/data_' + type + '.csv'
+    with open(results_path, 'a') as results:
+        writer_object = writer(results)
+        writer_object.writerow(carbon)
 
-    results_path = '/Users/benji/DP4_testing/data_' + type + '_'
+    # For use with DP4-AI test set in DP4_testing directory
+    # rows = [proton, carbon, combined]
 
-    for method, row in zip(methods, rows):
-        with open(results_path + method + '.csv', 'a') as results:
-            writer_object = writer(results)
-            writer_object.writerow(row)
+    # methods = ['proton', 'carbon', 'combined']
+
+    # results_path = '/Users/benji/DP4_testing/data_' + type + '_'
+
+    # for method, row in zip(methods, rows):
+    #     with open(results_path + method + '.csv', 'a') as results:
+    #         writer_object = writer(results)
+    #         writer_object.writerow(row)
 
     return DP4Data
 

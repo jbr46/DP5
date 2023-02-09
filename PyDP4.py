@@ -450,7 +450,7 @@ def main(settings):
             Isomers = DFT.ReadShieldings(Isomers)
             Isomers = DFT.ReadEnergies(Isomers, settings)
 
-    if ((NMR.NMRDataValid(Isomers)) or ('n' not in settings.Workflow)) \
+    if not (NMR.NMRDataValid(Isomers)) or ('n' not in settings.Workflow) \
         and ('l' not in settings.Workflow) and ('p' not in settings.Workflow) and ('b' not in settings.Workflow):
         print('\nNo NMR data calculated, quitting...')
         quit()
