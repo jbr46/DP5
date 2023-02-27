@@ -7,6 +7,10 @@ import os
 import time
 import glob
 import shutil
+import sys
+
+sys.path.insert(0, '/Users/benji/CASCADE_package/CASCADE')
+from CASCADE import prediction
 
 def SetupCNMRPred(Isomers, settings):
 
@@ -33,8 +37,6 @@ def SetupCNMRPred(Isomers, settings):
 def RunCNMRPred(Isomers, settings):
 
     print('\nRunning CASCADE NMR prediction locally...')
-
-    from CASCADE import prediction
     
     save_folder = os.getcwd() + '/nmr'
     path_csv = save_folder + '/CASCADE_inputs.csv'
