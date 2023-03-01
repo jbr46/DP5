@@ -80,6 +80,7 @@ class Settings:
     # n for DFT NMR calculation
     # l for SGNN NMR prediction
     # p for CASCADE NMR prediction
+    # b for SGNN and CASCADE NMR prediction and combined DP4 statistics
     # s for computational and experimental NMR data extraction and stats analysis
     # w for DP5 probability calculation
     Solvent = ''  # solvent for DFT optimization and NMR calculation
@@ -129,6 +130,10 @@ class Settings:
     oFunctional = "b3lyp"  # Functional for geometry optimizations
     eBasisSet = "def2tzvp"  # Basis set for energy calculations
     eFunctional = "m062x"  # Functional for energy calculations
+
+    # --- ML NMR prediction ---
+    CASCADE_path = '/CASCADE' # Define the root folder for CASCADE
+    SGNN_path = '/SGNN' # Define the root folder for SGNN
 
     # --- Computational clusters ---
     """ These should probably be moved to relevant *.py files as Cambridge specific """
@@ -455,6 +460,7 @@ def main(settings):
         print('\nNo NMR data calculated, quitting...')
         quit()
 
+    NMRData = None
     if ('s' in settings.Workflow) or ('a' in settings.Workflow) or ('w' in settings.Workflow):
 
         if ('n' in settings.Workflow):

@@ -51,7 +51,7 @@ More details about the software can be found in the publication DP5 Straight fro
 
 ===============================================================
 
-REQUIREMENTS AND SETUP
+REQUIREMENTS AND SETUP - DFT FOR NMR SHIFT CALCULATION
 
 All the python  files and one utility to convert to and from TINKER
 nonstandard xyz file are in the attached archive. They are set up to work
@@ -62,15 +62,19 @@ The script currently is set up to use MacroModel for molecular mechanics and
 Gaussian for DFT and it runs Gaussian on ziggy by default. NWChem and TINKER is also supported.
 This setup has several requirements.
 
-1) One should have MacroModel or TINKER and NWChem or Gaussian.
+1) One should have ((MacroModel or TINKER) and (NWChem or Gaussian)), or CASCADE or SGNN.
 The DP5 folder can contain settings.cfg, where the locations for the installed software packages
 can be given, so that DP5 can launch them and use in the workflow. Examples on how to do
 this are provided in the included settings.example - this should be renamed to settings.cfg and
 any relevant changes made.
 
 2) In order to run DP5 a python 3.6+ environment the following packages are required:
-numpy scipy Cython matplotlib nmrglue statsmodels lmfit openbabel rdkit pathos
+numpy scipy Cython matplotlib nmrglue statsmodels lmfit openbabel rdkit pathos qml
 Additionally, the graphical user interface requires PyQT5
+
+The qml package is only used when running DP5 calculations. If only doing DP4 calculations, qml is
+not needed and the import of DP5 on line 47 of PyDP4.py can be commented out. This may be helpful
+if difficulties are encountered in installing qml.
 
 3) RDKit and OpenBabel are required for the automatic diastereomer generation and
 other manipulations of sdf files (renumbering, ring corner flipping), as well as molecule
@@ -91,9 +95,51 @@ to fit your situation.
 and all the backend software should work equally well on MacOS with minor adjustments.
 Windows will require more modification, and is currently not supported.
 
+===============================================================
+
+REQUIREMENTS AND SETUP - ML FOR NMR SHIFT CALCULATION
+
+All the python files are in the attached archive. They are set up to work
+from a centralised location. It is not a requirement, but it is probably
+best to add the location to the PATH variable.
+
+The script currently is set up to use SGNN or CASCADE for NMR shift prediction.
+This setup has several requirements.
+
+1) One should have CASCADE or SGNN, or both. The DP5 folder can contain settings.cfg, 
+where the locations for the installed software packages can be given, so that DP5 can 
+launch them and use in the workflow. Examples on how to do this are provided in the included
+settings.example - this should be renamed to settings.cfg and any relevant changes made.
+
+2) In order to run DP5 a python 3.6+ environment the following packages are required:
+numpy scipy Cython matplotlib nmrglue statsmodels lmfit openbabel rdkit pathos qml
+Additionally, the graphical user interface requires PyQT5
+
+The qml package is only used when running DP5 calculations. If only doing DP4 calculations, qml is
+not needed and the import of DP5 on line 47 of PyDP4.py can be commented out. This may be helpful
+if difficulties are encountered in installing qml.
+
+The nmrglue package is only used when using automatic parsing of raw NMR data. If NMR descriptions are
+instead provided, nmrglue is not needed and the imports of process_proton and process_carbon on lines
+23 and 24 of NMR.py may be commented out.
+
+3) RDKit and OpenBabel are required for the automatic diastereomer generation and
+other manipulations of sdf files (renumbering, ring corner flipping), as well as molecule
+graphical plotting. For OpenBabel this requirement includes Python bindings.
+The following links provide instructions for building OpenBabel with Python bindings:
+http://openbabel.org/docs/dev/UseTheLibrary/PythonInstall.html
+http://openbabel.org/docs/dev/Installation/install.html#compile-bindings
+Alternatively, the OpenBabel package in conda repository has also lately become
+more reliable, and is much easier to install. Both OpenBabel 2.4.1 and 3.x are supported.
+
+
+5) All development and testing was done on Linux. However, both the scripts
+and all the backend software should work equally well on MacOS with minor adjustments.
+Windows will require more modification, and is currently not supported.
+
 ===================
 
-USAGE - GUI
+USAGE - GUI 
 
 To call the script from the Graphical User Interface
 
@@ -134,9 +180,9 @@ PyDP4.py -w gmns Candidate CandidateNMR
 
 The -w switch specifies the PyDP4 workflow, c specifies structure cleaning utilising RDkit, g specifies diastereomer
 generation, m molecular mechanics conformational searching, o DFT geometry optimisation, n DFT NMR calculation,
-e M062X single point energy calculations, s calculate DP4 statistics and w for DP5 statistics.
-The default workflow is gnms, optimum workflow is gnomes. The letter a can be given in place of s, in the instance
-DP5 will analyse and assign the provided NMR spectra but not calculate any probabilities.
+e M062X single point energy calculations, l SGNN NMR prediction, p CASCADE NMR prediction, b both SGNN and CASCADE NMR prediction, 
+s calculate DP4 statistics and w for DP5 statistics. The default workflow is gnms, optimum workflow is gnomes. The letter a can
+be given in place of s, in the instance DP5 will analyse and assign the provided NMR spectra but not calculate any probabilities.
 
 In addition the -s switch can be used to specify the solvent for use in MM and DFT calculations. Supported solvents are
 listed in the TMSdata file. Other Gaussian/Jaguar/NWChem supported solvents can be used, but only with manually interpreted

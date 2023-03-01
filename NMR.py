@@ -373,6 +373,11 @@ def NMRDataValid(Isomers):
 
 def ReadPredictedShifts(Isomers, settings):
     print('WARNING: NMR shift prediction currently ignores the instruction to exclude atoms from analysis')
+    if ('l' in settings.Workflow) or ('b' in settings.Workflow):
+        method = 'SGNN'
+    else:
+        method = 'CASCADE'
+
     for i, iso in enumerate(Isomers):
 
         shifts = iso.PredShifts
@@ -400,10 +405,10 @@ def ReadPredictedShifts(Isomers, settings):
         Isomers[i].Clabels = Clabels
         Isomers[i].Hlabels = Hlabels
 
-        print('C shifts predicted by SGNN for isomer ' + str(i + 1) + ": ")
+        print(f'C shifts predicted by {method} for isomer {str(i + 1)}:')
         print(', '.join(['{0:.3f}'.format(x) for x in Isomers[i].Cshifts]))
 
-        print('H shifts predicted by SGNN for isomer ' + str(i + 1) + ": ")
+        print(f'H shifts predicted by {method} for isomer {str(i + 1)}:')
         print(', '.join(['{0:.3f}'.format(x) for x in Isomers[i].Hshifts]))
 
     return Isomers
