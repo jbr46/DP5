@@ -3,6 +3,11 @@
 # -*- coding: utf-8 -*-
  
 import os
+import sys
+
+sys.path.insert(0, '/Users/benji/SGNN_package/SGNN')
+
+from SGNN import prediction
 
 def SetupNMRPred(Isomers, settings):
 
@@ -29,8 +34,6 @@ def SetupNMRPred(Isomers, settings):
 def RunNMRPred(Isomers, settings):
 
     print('\nRunning SGNN NMR prediction locally...')
-
-    from SGNN import prediction
     
     save_folder = os.getcwd() + '/nmr'
     path_csv = save_folder + '/SGNN_inputs.csv'
