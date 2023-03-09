@@ -263,7 +263,8 @@ def main(settings):
 
         FinalInputFiles = []
 
-        nStereo = [StructureInput.NumberofStereoCentres(InpFile) for InpFile in settings.InputFiles]
+        # nStereo = [StructureInput.NumberofStereoCentres(InpFile) for InpFile in settings.InputFiles]
+        nStereo = [100]
 
         if len(settings.InputFiles) == 1:
 
@@ -277,7 +278,7 @@ def main(settings):
 
         settings.InputFiles = list(FinalInputFiles)
 
-    # settings.InputFilesPaths = [Path.cwd() / i for i in settings.InputFiles]
+    settings.InputFilesPaths = [Path.cwd() / i for i in settings.InputFiles]
 
     print("Generated input files: " + str(settings.InputFiles) + '\n')
 
