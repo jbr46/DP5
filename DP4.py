@@ -135,7 +135,7 @@ def ProcessIsomers_CASCADE(DP4data, Isomers):
         DP4data.Cexp.append([])
         DP4data.Clabels.append([])
 
-        for shift, exp, label in zip(iso.Cshifts_CASCADE, iso.Cexp, iso.Clabels):
+        for shift, exp, label in zip(iso.Cshifts_CASCADE, iso.Cexp_CASCADE, iso.Clabels):
 
             if exp != '':
                 DP4data.Cshifts[-1].append(shift)
@@ -166,7 +166,7 @@ def ProcessIsomers_CASCADE(DP4data, Isomers):
         DP4data.Hexp.append([])
         DP4data.Hlabels.append([])
 
-        for shift, exp, label in zip(iso.Hshifts_CASCADE, iso.Hexp, iso.Hlabels):
+        for shift, exp, label in zip(iso.Hshifts_CASCADE, iso.Hexp_CASCADE, iso.Hlabels):
 
             if exp != '':
                 DP4data.Hshifts[-1].append(shift)
@@ -558,7 +558,7 @@ def SaveResults(DP4Data, Settings):
     elif ('p' in Settings.Workflow):
         type = 'CASCADE'
     elif ('b' in Settings.Workflow):
-        type = 'combined'
+        type = 'consensus'
 
     # For use with DP5 test set in DP5_testing directory
     # results_path = '/Users/benji/DP5_testing/data_' + type + '.csv'

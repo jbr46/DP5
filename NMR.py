@@ -700,6 +700,89 @@ def PairwiseAssignment(Isomers, NMRData, settings):
 
     return Isomers
 
+def PairwiseAssignment_CASCADE(Isomers, NMRData, settings):
+
+    # for each isomer sort the experimental and calculated shifts
+
+    for iso in Isomers:
+
+        sortedCCalc = sorted(iso.Cshifts_CASCADE, reverse=True)
+
+        sortedClabels =[  '' for i in iso.Clabels]
+
+        for ind_1 ,  shift in enumerate(iso.Cshifts_CASCADE):
+
+            ind_2 = sortedCCalc.index(shift)
+
+            sortedClabels[ind_2] = iso.Clabels[ind_1]
+
+
+        sortedHCalc = sorted(iso.Hshifts_CASCADE, reverse=True)
+
+        sortedHlabels = ['' for i in iso.Hlabels]
+
+        for ind_1, shift in enumerate(iso.Hshifts_CASCADE):
+
+            ind_2 = sortedHCalc.index(shift)
+
+            sortedHlabels[ind_2] = iso.Hlabels[ind_1]
+
+
+        sortedCExp = sorted(NMRData.Cshifts, reverse=True)
+        sortedHExp = sorted(NMRData.Hshifts, reverse=True)
+
+        assignedCExp = [1] * len(sortedCCalc)
+        assignedHExp = [1] * len(sortedHCalc)
+
+        tempCCalcs = list(iso.Cshifts_CASCADE)
+        tempHCalcs = list(iso.Hshifts_CASCADE)
+
+        # do the assignment in order of chemical shift starting with the largest
+
+        # Carbon
+
+
+        exp_ind = 0
+
+        if ('z' not in settings.Workflow):
+
+            for shift ,label in zip( sortedCCalc , sortedClabels):
+
+                if label not in NMRData.Omits:
+
+                    ind = tempCCalcs.index(shift)
+
+                    assignedCExp[ind] = sortedCExp[exp_ind]
+
+                    tempCCalcs[ind] = ''
+
+                    exp_ind += 1
+
+        # Proton
+
+        exp_ind = 0
+
+        if ('x' not in settings.Workflow):
+
+            for shift,label in zip( sortedHCalc,sortedHlabels):
+
+                if label not in NMRData.Omits:
+
+                    ind = tempHCalcs.index(shift)
+
+                    assignedHExp[ind] = sortedHExp[exp_ind]
+
+                    tempHCalcs[ind] = ''
+
+                    exp_ind += 1
+
+        # update isomers class
+
+        iso.Cexp_CASCADE = assignedCExp
+        iso.Hexp_CASCADE = assignedHExp
+
+    return Isomers
+
 
 
 

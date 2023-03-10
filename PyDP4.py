@@ -203,6 +203,8 @@ class Isomer:
         self.Hlabels = []
         self.Cexp = []  # Experimental C NMR shifts
         self.Hexp = []  # Experimental H NMR shifts
+        self.Cexp_CASCADE = [] # Experimental C NMR shifts, CASCADE assigned
+        self.Hexp_CASCADE = [] # Experimental H NMR shifts, CASCADE assigned
 
 def main(settings):
 
@@ -496,6 +498,9 @@ def main(settings):
             # performs a pairwise assignment
 
             Isomers = NMR.PairwiseAssignment(Isomers, NMRData, settings)
+
+            if ('b' in settings.Workflow):
+                Isomers = NMR.PairwiseAssignment_CASCADE(Isomers, NMRData, settings)
 
             print('Cshifts: ' + str(NMRData.Cshifts))
             print('Hshifts: ' + str(NMRData.Hshifts))
